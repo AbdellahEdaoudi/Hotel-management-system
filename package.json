@@ -14,7 +14,7 @@
     "@stripe/stripe-js": "^3.4.0",
     "animate.css": "^4.1.1",
     "aws-sdk": "^2.1576.0",
-    "axios": "^1.6.7",
+    "axios": "^1.12.0",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "date-fns": "^3.6.0",
