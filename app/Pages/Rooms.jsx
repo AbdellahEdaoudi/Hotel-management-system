@@ -28,6 +28,16 @@ function Rooms() {
       axios.get(`${process.env.NEXT_PUBLIC_SERVER_URl}/Rooms`)
         .then((res) => setdataH(res.data))
     },[]);  
+    const RoomsImages = [
+      "./rooms/r1.jpg",
+      "./rooms/r2.jpg",
+      "./rooms/r3.jpg",
+      "./rooms/r4.jpg",
+      "./rooms/r5.jpg",
+      "./rooms/r6.jpg",
+      "./rooms/r7.jpg",
+      "./rooms/r8.jpg",
+    ]
   
 
       return (
@@ -49,7 +59,7 @@ function Rooms() {
                   <div className="bg-white rounded-md shadow-md border pb-4" key={i} >
                     <nav className="relative">
                      {/* img */}
-                    <img src={rm.imageUrl} alt={rm.name} className="w-full rounded-md " />
+                    <img src={RoomsImages[i]} alt={rm.name} className="w-full rounded-md " />
                     <span className="absolute -mt-4 ml-4 px-2 py-1  bg-amber-500 text-sm text-white rounded-md">{rm.prix}$/night</span>
                     </nav>
                     <div className="px-5">
@@ -75,7 +85,7 @@ function Rooms() {
                   <div className="bg-white rounded-md shadow-md border pb-4" key={i} >
                     <nav className="relative">
                      {/* img */}
-                     <img src={rm.imageUrl} alt={rm.name} className="w-full rounded-md " />
+                     <img src={RoomsImages[i]} alt={rm.name} className="w-full rounded-md " />
                     <span className="absolute -mt-4 ml-4 px-2 py-1  bg-amber-500 text-sm text-white rounded-md">{rm.prix}$/night</span>
                     </nav>
                     <div className="px-5">
