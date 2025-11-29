@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import { useSession } from "next-auth/react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -26,7 +25,7 @@ function Page() {
 
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URl}/Adminlogin`,
+        `${process.env.NEXT_PUBLIC_SERVER_URl}/login`,
         { email, pass }
       );
 

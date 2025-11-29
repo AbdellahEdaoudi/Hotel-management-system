@@ -3,7 +3,6 @@ import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js'
 import axios from 'axios';
 import { differenceInDays, format, parseISO } from 'date-fns';
 import { enUS } from 'date-fns/locale';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
@@ -16,7 +15,6 @@ const CheckoutForm = ({ amount }) => {
   const [ErrorMessage, setErrorMessage] = useState();
   const [Booking, setBooking] = useState([]);
   const [Bookinge, setBookinge] = useState([]);
-  const { data, status } = useSession();
   const router = useRouter()
 
   useEffect(() => {

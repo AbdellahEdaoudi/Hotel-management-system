@@ -4,7 +4,6 @@ import './globals.css';
 import Header from './Pages/Header';
 import Footer from './Pages/Footer';
 import 'animate.css';
-import NextAuthProvider from './providers/NextAuthProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 const prompt = Prompt({ subsets: ['latin'], weight: '400' });
@@ -83,21 +82,14 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <>
-      <Head>
-        <title>EdHotel</title>
-      </Head>
       <html lang="en" className="scroll-smooth">
         <body className={`${prompt.className}`}>
-          <NextAuthProvider>
-            <div className="sticky top-0 z-10">
-              <Header />
-            </div>
-            {children}
-            <Footer />
-          </NextAuthProvider>
+          <div className="sticky top-0 z-10">
+            <Header />
+          </div>
+          {children}
+          <Footer />
         </body>
       </html>
-    </>
   );
 }

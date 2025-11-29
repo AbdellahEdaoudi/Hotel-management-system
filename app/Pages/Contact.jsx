@@ -1,14 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function Contact() {
     const router = useRouter();
-    const { data, status } = useSession();
     const emaill = <img src="email.png" alt="email" width={22} height={11} />;
 
     const [name, setName] = useState(typeof window !== 'undefined' ? localStorage.getItem("nameuser") || "" : "");
@@ -16,15 +14,6 @@ function Contact() {
     const [subject, setSubject] = useState("");
     const [msg, setMsg] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-
-    useEffect(() => {
-        if (data?.user) {
-            setName(data.user.name);
-            setEmail(data.user.email);
-            localStorage.setItem("nameuser", data.user.name);
-            localStorage.setItem("emailuser", data.user.email);
-        }
-    }, [data]);
 
     const PostContact = async (e) => {
         e.preventDefault();
@@ -64,16 +53,7 @@ function Contact() {
             setIsLoading(false);
         }
     };
-
-    useEffect(() => {
-        const accessToken = typeof window !== 'undefined' ? localStorage.getItem("accessToken") : null;
-        if (!accessToken && status === "unauthenticated") {
-            router.push("/Login");
-        } else {
-            router.push("/Contact");
-        }
-    }, [router, status]);
-
+    
     return (
         <div>
             <div className="w-full h-full mt-7 text-center">

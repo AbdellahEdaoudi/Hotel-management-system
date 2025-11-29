@@ -1,12 +1,8 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import React from "react";
 import { Bike, Cake, Dumbbell, School, Spade, Utensils } from "lucide-react";
 
 function Servise() {
-    const router = useRouter();
-    const {data,status}=useSession()
     const dataServices = [
       { Icon: <School width={44} height={44} />, name: "Rooms & Appartment", dec: "Find your perfect vacation rental or long-term accommodation." },
       { Icon: <Utensils width={44} height={44} />, name: "Food & Restaurant", dec: "Explore a wide variety of cuisines from top-rated restaurants." },
@@ -15,14 +11,6 @@ function Servise() {
       { Icon: <Cake width={44} height={44} />, name: "Events & Parties", dec: "Organize your perfect event, from weddings to conferences." },
       { Icon: <Dumbbell width={44} height={44} />, name: "Gym & Yoga", dec: "Achieve your fitness goals with our modern gym and yoga classes." },
     ];
-    useEffect(() => {
-      const accessToken = typeof window !== 'undefined' ? localStorage.getItem("accessToken") : null;
-      if (!accessToken && status === "unauthenticated") {
-        router.push("/Login");
-      } else {
-        router.push("/Services");
-      }
-    }, [router, status]);
     return (
       <div>
           {/* SERVICES */}

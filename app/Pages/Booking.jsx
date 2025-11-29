@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { signIn, useSession } from "next-auth/react";
 import axios from "axios";
 import { differenceInDays, format, parseISO } from 'date-fns';
 import { enUS } from 'date-fns/locale';
@@ -9,19 +8,7 @@ import Link from "next/link";
 
 export function Booking() {
   const router = useRouter();
-  const { data, status } = useSession();
   const [bookings, setBookings] = useState([]);
-  useEffect(() => {
-    // const accessToken = typeof window !== 'undefined' ? localStorage.getItem("accessToken") : null;
-    if (status === "unauthenticated") {
-      signIn("google", {redirect:true, callbackUrl:`/Booking`})
-    } else {
-      router.push(`/Booking`);
-    }
-  }, [router, status]);
-  useEffect(() => {
-    {status==="unauthenticated" ? signIn("google", {redirect:true, callbackUrl:`/Booking`}): router.push(`/Booking`)}
-  }, [router]);
 
   const fetchBookings = async () => {
     try {
@@ -34,7 +21,7 @@ export function Booking() {
 
   const deleteAllBookings = async () => {
     if (confirm('Are you sure you want to cancel All bookings?')) {
-      const userBookings = bookings.filter((bk) => bk.email === data?.user.email);
+      const userBookings = bookings.filter((bk) => bk.email);
     try {
       await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URl}/BookingdAll`, {
         data: { bookings: userBookings }
@@ -86,7 +73,7 @@ export function Booking() {
 
   const getTotal = () => {
     let total = 0;
-    bookings.filter((bk) => bk.email === data?.user.email).forEach((bk) => {
+    bookings.filter((bk) => bk.email === localStorage.getItem("emailuser")).forEach((bk) => {
       total += bk.prix;
     });
     return total;
@@ -105,7 +92,7 @@ export function Booking() {
 
   return (
     <div className="pb-16 mt-5">
-      <div className={`float-end mx-5 md:mx-32 ${bookings.filter((bk) => bk.email === data?.user.email).length === 0 ? "hidden" : ""}`}>
+      <div className={`float-end mx-5 md:mx-32 ${bookings.filter((bk) => bk.email === localStorage.getItem("emailuser")).length === 0 ? "hidden" : ""}`}>
         <button onClick={deleteAllBookings} className="p-2 bg-amber-400 rounded-md mr-2 text-black">
           CANCEL ALL RESERVATIONS
         </button>
@@ -114,8 +101,8 @@ export function Booking() {
         </button>
       </div>
       <br /><br />
-      {bookings.filter((bk) => bk.email === data?.user.email).length > 0 ?
-        bookings.filter((bk) => bk.email === data?.user.email).map((bk, i) => {
+      {bookings.filter((bk) => bk.email === localStorage.getItem("emailuser")).length > 0 ?
+        bookings.filter((bk) => bk.email === localStorage.getItem("emailuser")).map((bk, i) => {
           const checkInDate = new Date(bk.check_in);
           const checkOutDate = new Date(bk.check_out);
           const formattedCheckIn = format(checkInDate, "MMMM do, yyyy", { locale: enUS });

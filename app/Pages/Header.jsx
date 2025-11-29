@@ -1,21 +1,15 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
-import SignInWithGoogle from "./SignInWithGoogle";
 import { LogOut } from "lucide-react";
 function Header() {
   const [menu, setMenu] = useState(false);
   const [link, setLink] = useState("");
-  const router = useRouter();
   const accessToken = typeof window !== 'undefined' ? localStorage.getItem("accessToken") : null;
   const nameuser = typeof window !== 'undefined' ? localStorage.getItem("nameuser") : null;
-  const {data,status}=useSession()
   
 
   const Logout = async () => {
-    await signOut();
     localStorage.removeItem("accessToken");
     window.location.replace('/Login');
   };
@@ -73,13 +67,7 @@ function Header() {
                 </ul>
             </div>
             {/* SignInWithGoogle */}
-            {!accessToken && status === "unauthenticated" ?  (
-              <div className="flex items-center gap-4">
-                <div className="sm:flex sm:gap-4">
-                  <div
-                  className="md:block hidden text-black"                  
-                  ><SignInWithGoogle  /></div>
-                  <div className="hidden sm:flex">
+            {!accessToken ?  (
                     <Link
                       onClick={() => {
                         !menu ? setMenu(menu) : setMenu(!menu);
@@ -89,17 +77,14 @@ function Header() {
                     >
                       Register
                     </Link>
-                  </div>
-                </div>
-              </div>
             ): null}
 
                   {/* LOGOUT */}
-            {accessToken || status === "authenticated" ? (
+            {accessToken ? (
               <div className="flex gap-2 items-center">
                 <h1
                 className="md:block hidden"
-                >{`Welcom, ${data?.user?.name ? data.user?.name.split(" ")[0] :  nameuser }`}</h1>
+              >{`Welcom, ${nameuser}`}</h1>
                 <button title="LogOut "
                   className="bg-red-500 p-1 rounded-md text-white"
                   onClick={Logout}

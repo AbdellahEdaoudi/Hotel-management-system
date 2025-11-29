@@ -1,13 +1,9 @@
 "use client"
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 import axios from 'axios';
 import Link from 'next/link';
 
 function ARooms({ setAdmin }) {
-  const router = useRouter();
-  const { data: sessionData, status } = useSession();
   const [dataH, setdataH] = useState([]);
   const star = <img src="star.png" alt="star.png" width={15} height={11} />;
   const bed = <img src="sleeping.png" alt="star.png" width={15} height={11} />;

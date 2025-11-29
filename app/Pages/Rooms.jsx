@@ -1,33 +1,22 @@
 "use client"
 import React, { useEffect, useState } from 'react'
 import { useRouter } from "next/navigation";
-import { signIn, useSession } from "next-auth/react";
 import axios from 'axios';
 import Link from 'next/link';
 function Rooms() {
     const router = useRouter();
-    const {data,status}=useSession()
     const [dataH,setdataH]=useState([]);
     const [fil,setFil]=useState("");
     const star = <img src="star.png" alt="star.png" width={22} height={11}/>
     const bed = <img src="sleeping.png" alt="star.png" width={22} height={11}/>
     const wifi = <img src="wifi.png" alt="star.png" width={22} height={11}/>
     const bath = <img src="bathtub.png" alt="star.png" width={22} height={11}/>
-    
-  
-    useEffect(() => {
-      const accessToken = typeof window !== 'undefined' ? localStorage.getItem("accessToken") : null;
-      if (!accessToken && status === "unauthenticated") {
-        router.push("/Login");
-      } else {
-        router.push("/Rooms");
-      }
-    }, [router, status]);
   
     useEffect(() => {
       axios.get(`${process.env.NEXT_PUBLIC_SERVER_URl}/Rooms`)
         .then((res) => setdataH(res.data))
     },[]);  
+    
     const RoomsImages = [
       "./rooms/r1.jpg",
       "./rooms/r2.jpg",
@@ -73,8 +62,8 @@ function Rooms() {
                      <span className="flex gap-1 items-center ">{wifi} Wifi </span>
                     </div>
                     <div className="flex justify-between mt-5">
-                     <Link href={`/Rooms/${rm._id}`}><button className="p-2 rounded-md hover:scale-105 duration-150 bg-yellow-500 text-white">VIEW DETAIL</button></Link>
-                     <Link href={`/Rooms/${rm._id}`}><button className="p-2 rounded-md hover:scale-105 duration-150 bg-black text-white">BOOK NOW</button></Link>
+                     <Link href={`/Rooms/${rm._id}?r=${RoomsImages[i].split("/")[2]}`}><button className="p-2 rounded-md hover:scale-105 duration-150 bg-yellow-500 text-white">VIEW DETAIL</button></Link>
+                     <Link href={`/Rooms/${rm._id}?r=${RoomsImages[i].split("/")[2]}`}><button className="p-2 rounded-md hover:scale-105 duration-150 bg-black text-white">BOOK NOW</button></Link>
                     </div>
                     </div>
                   </div>
@@ -97,21 +86,11 @@ function Rooms() {
                      <span className="flex gap-1 items-center ">{wifi} Wifi </span>
                     </div>
                     <div className="flex justify-between mt-5">
-                     <button onClick={()=>{
-                      if (status === "unauthenticated") {
-                        signIn("google", {redirect:true, callbackUrl:"/Rooms"})
-                      }else{
-                        router.push(`/Rooms/${rm._id}`)
-                      }
-                     }}  className="p-2 rounded-md hover:scale-105 duration-150 bg-yellow-500 text-white">VIEW DETAIL
+                     <button onClick={()=>{router.push(`/Rooms/${rm._id}`)}}
+                     className="p-2 rounded-md hover:scale-105 duration-150 bg-yellow-500 text-white">VIEW DETAIL
                      </button>
-                     <button onClick={()=>{
-                      if (status === "unauthenticated") {
-                        signIn("google", {redirect:true, callbackUrl:"/Rooms"})
-                      }else{
-                        router.push(`/Rooms/${rm._id}`)
-                      }
-                     }}  className="p-2 rounded-md hover:scale-105 duration-150 bg-black text-white">BOOK NOW
+                     <button onClick={()=>{router.push(`/Rooms/${rm._id}`)}}
+                        className="p-2 rounded-md hover:scale-105 duration-150 bg-black text-white">BOOK NOW
                      </button>
                     </div>
                     </div>

@@ -4,12 +4,10 @@ import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import { FolderDot, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 
 function Page({ params }) {
   const router = useRouter();
   const formRef = useRef(null);
-  const { data } = useSession();
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("");
   const [html, setHtml] = useState("");

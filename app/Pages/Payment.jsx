@@ -1,7 +1,6 @@
 // Payment.js
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import axios from "axios";
 import { differenceInDays, format, parseISO } from 'date-fns';
 import { enUS } from 'date-fns/locale';
@@ -10,7 +9,6 @@ import PrintReservation from "./PrintReservation";
 
 export function Payment() {
   const router = useRouter();
-  const { data, status } = useSession();
   const [bookings, setBookings] = useState([]);
 
   const fetchBookings = async () => {
@@ -34,10 +32,10 @@ export function Payment() {
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
-    if (!accessToken && status === "unauthenticated") {
+    if (!accessToken) {
       router.push("/Login");
-    }
-  }, [router, status]);
+      }
+    }, [router]);
 
   const deleteBooking = async (id) => {
     try {
@@ -51,8 +49,8 @@ export function Payment() {
   return (
     <div className="pb-16 mt-5">
       <br /><br />
-      {bookings.filter((bk) => bk.email === data?.user.email).length > 0 ?
-        bookings.filter((bk) => bk.email === data?.user.email).map((bk, i) => {
+      {bookings.filter((bk) => bk.email === localStorage.getItem("emailuser")).length > 0 ?
+        bookings.filter((bk) => bk.email === localStorage.getItem("emailuser")).map((bk, i) => {
           const checkInDate = new Date(bk.check_in);
           const checkOutDate = new Date(bk.check_out);
           const formattedCheckIn = format(checkInDate, "MMMM do, yyyy", { locale: enUS });

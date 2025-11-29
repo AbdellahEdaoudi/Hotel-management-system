@@ -6,7 +6,6 @@ import ABooking from "./ABooking";
 import APaying from "./APaying";
 import AContact from "./AContact";
 import AddRoom from "./AddRoom";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -14,7 +13,6 @@ import "react-toastify/dist/ReactToastify.css";
 function Admin() {
   const AdminStg = typeof window !== 'undefined' ? localStorage.getItem("admin") : null;
   const [Admin, setAdmin] = useState(AdminStg || "ROOMS");
-  const { data, status } = useSession();
   const router = useRouter();
 
 
