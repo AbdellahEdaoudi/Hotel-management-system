@@ -59,14 +59,10 @@ export const metadata = {
     images: [
       {
         url: 'https://res.cloudinary.com/dynprvsfg/image/upload/v1717421518/wprm2rcy3qvhn1jvc1wk.png',
-        width: 800,
-        height: 600,
         alt: 'EdHotel Dashboard Preview',
       },
       {
         url: 'https://res.cloudinary.com/dynprvsfg/image/upload/v1717421518/wprm2rcy3qvhn1jvc1wk.png',
-        width: 1800,
-        height: 1600,
         alt: 'EdHotel Dashboard Large',
       },
     ],
