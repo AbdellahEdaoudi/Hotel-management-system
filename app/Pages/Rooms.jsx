@@ -91,11 +91,12 @@ function Rooms() {
           (fil === "" ? dataH : dataH.filter((flt) => flt.type === fil)).map((rm, i) => (
             <div className="bg-white rounded-md shadow-md border pb-4" key={i} >
               <nav className="relative">
-                <img src={RoomsImages[i % RoomsImages.length]} alt={rm.name} className="w-full h-48 object-cover rounded-md" />
+                <img src={rm.imageUrl} alt={rm.name} className="w-full h-48 object-cover rounded-md" />
                 <span className="absolute -mt-4 ml-4 px-2 py-1 bg-amber-500 text-sm text-white rounded-md">{rm.prix}$/night</span>
               </nav>
               <div className="px-5">
-                <p className="pt-4 flex justify-between text-black text-xl font-bold mb-3">{rm.name}
+                <p className="pt-4 flex justify-between text-black text-xl font-bold mb-3">
+                  <span className='line-clamp-1'>{rm.name}</span>
                   <span className="flex gap-1">{star}{star}{star}{star}{star}</span>
                 </p>
                 <div className="flex space-x-3 text-gray-800">
@@ -104,10 +105,10 @@ function Rooms() {
                   <span className="flex gap-1 items-center ">{wifi} Wifi </span>
                 </div>
                 <div className="flex justify-between mt-5">
-                  <Link href={`/Rooms/${rm._id}?r=${RoomsImages[i % RoomsImages.length].split("/")[2]}`}>
+                  <Link href={`/Rooms/${rm._id}`}>
                     <button className="p-2 rounded-md hover:scale-105 duration-150 bg-yellow-500 text-white">VIEW DETAIL</button>
                   </Link>
-                  <Link href={`/Rooms/${rm._id}?r=${RoomsImages[i % RoomsImages.length].split("/")[2]}`}>
+                  <Link href={`/Rooms/${rm._id}`}>
                     <button className="p-2 rounded-md hover:scale-105 duration-150 bg-black text-white">BOOK NOW</button>
                   </Link>
                 </div>

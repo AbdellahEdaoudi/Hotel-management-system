@@ -6,18 +6,14 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { differenceInDays, parseISO } from "date-fns";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
 
 function Page({ params }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const r = searchParams.get('r');
   const [isLoading, setIsLoading] = useState(true);
   const star = <Image src="/star.png" alt="star" width={22} height={11} />
   const bed = <Image src="/sleeping.png" alt="bed" width={22} height={11} />
   const wifi = <Image src="/wifi.png" alt="wifi" width={22} height={11} />
   const bath = <Image src="/bathtub.png" alt="bath" width={22} height={11} />
-  const [roomImage, setRoomImage] = useState(r);
   const [rm, setrm] = useState({});
   const [nameC, setNameC] = useState("");
   const [email, setEmail] = useState("");
@@ -246,9 +242,9 @@ function Page({ params }) {
           <div className="lg:col-span-2">
             <div className="glass-effect rounded-2xl shadow-2xl overflow-hidden room-card">
               <div className="image-container">
-                {roomImage && (
+                {rm.imageUrl && (
                   <img
-                    src={roomImage}
+                    src={rm.imageUrl}
                     alt={rm.name || "Room"}
                     className="w-full h-96 object-cover"
                   />
