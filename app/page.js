@@ -1,10 +1,14 @@
-"use client"
 import HomePage from "./HomePage/page";
 
-export default  function Home() {
-    return (
+export const metadata = {
+  title: 'Home | EdHotel',
+  description: 'Welcome to EdHotel, your premium hotel management solution.',
+};
+
+export default function Home() {
+  return (
     <div >
-      <HomePage/>
+      <HomePage />
     </div>
   );
 }

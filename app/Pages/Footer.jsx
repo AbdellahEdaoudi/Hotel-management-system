@@ -8,7 +8,7 @@ function Footer() {
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
             <div>
               <div className="text-teal-600 flex items-center space-x-3">
-                <img src="Logo-my-hotel-app.png" width={100} />
+                <img src="/Images/logo.png" width={100} alt="EdHotel Logo" />
                 <span className="text-3xl">EdHotel</span>
               </div>
               <p className="mt-4 max-w-xs text-gray-500">

@@ -16,10 +16,10 @@ function Header() {
     if (typeof window !== 'undefined') {
       const intervalId = setInterval(() => {
         setEmail(localStorage.getItem("email"));
-      const token = localStorage.getItem("accessToken");
-      const name = localStorage.getItem("nameuser");
-      setAccessToken(token);
-      setNameuser(name);
+        const token = localStorage.getItem("accessToken");
+        const name = localStorage.getItem("nameuser");
+        setAccessToken(token);
+        setNameuser(name);
       }, 1000);
 
       return () => clearInterval(intervalId);
@@ -29,6 +29,7 @@ function Header() {
   const Logout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("nameuser");
+    localStorage.removeItem("email");
     window.location.replace('/Login');
   };
 
@@ -39,7 +40,7 @@ function Header() {
         <div className="mx-auto px-4 sm:px-6 lg:px-8 shadow-md">
           <div className="flex h-16 items-center justify-between">
             <Link className="flex items-center text-yellow- gap-2 " href="/">
-              <img src={"/Logo-my-hotel-app.png"} width={70} height={10} alt="Logo" />
+              <img src={"/Images/logowb.png"} width={70} height={10} alt="Logo" />
               <p className="text-2xl font-bold">EdHotel</p>
             </Link>
           </div>
@@ -52,9 +53,9 @@ function Header() {
     <header className="py-1 bg-slate-900 text-yellow-100 shadow-lg border-b border-yellow-100/20 sticky top-0 z-50 backdrop-blur-md">
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          <Link className="flex items-center gap-2 group" href="/">
+          <Link className="flex items-center  group" href="/">
             <img
-              src={"/Logo-my-hotel-app.png"}
+              src={"/Images/logowb.png"}
               width={70}
               height={10}
               alt="Logo"

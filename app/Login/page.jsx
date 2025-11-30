@@ -125,7 +125,7 @@ function page() {
         {/* Logo */}
         <div className="text-center mb-4 logo-container">
           <Image
-            src="/Logo-my-hotel-app.png"
+            src="/Images/logo.png"
             className="mx-auto"
             alt="Hotel Logo"
             height={80}
