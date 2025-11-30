@@ -1,229 +1,201 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { LogOut } from "lucide-react";
+import { LogOut, Menu, X, User } from "lucide-react";
+
 function Header() {
   const [menu, setMenu] = useState(false);
   const [link, setLink] = useState("");
-  const accessToken = typeof window !== 'undefined' ? localStorage.getItem("accessToken") : null;
-  const nameuser = typeof window !== 'undefined' ? localStorage.getItem("nameuser") : null;
-  
+  const [accessToken, setAccessToken] = useState(null);
+  const [nameuser, setNameuser] = useState(null);
+  const [mounted, setMounted] = useState(false);
+  const [email, setEmail] = useState(null);
 
-  const Logout = async () => {
+  useEffect(() => {
+    setMounted(true);
+    if (typeof window !== 'undefined') {
+      const intervalId = setInterval(() => {
+        setEmail(localStorage.getItem("email"));
+      const token = localStorage.getItem("accessToken");
+      const name = localStorage.getItem("nameuser");
+      setAccessToken(token);
+      setNameuser(name);
+      }, 1000);
+
+      return () => clearInterval(intervalId);
+    }
+  }, []);
+
+  const Logout = () => {
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("nameuser");
     window.location.replace('/Login');
   };
-  
-  
 
-  return (
-      <header className="bg-slate-900 py-1  text-yellow-100  shadow-lg border rounded border-yellow-100 ">
-        <div className="mx-auto  px-4 sm:px-6 lg:px-8 shadow-md">
+  // Prevent hydration mismatch by not rendering user-specific content until mounted
+  if (!mounted) {
+    return (
+      <header className="py-1 bg-slate-900 text-yellow-100 shadow-lg border rounded border-yellow-100">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8 shadow-md">
           <div className="flex h-16 items-center justify-between">
-              <Link className="flex items-center text-yellow- gap-2 " href="/">
-                <img src={"/Logo-my-hotel-app.png"} width={70} height={10} />
-                <p className="text-2xl font-bold  ">EdHotel</p>
-              </Link>
-              {/* LES LINK */}
-            <div className="hidden md:block">
-                <ul className="flex items-center gap-6 text-sm">
-                  <li className=" hover:scale-125 hover:text-green-500  duration-200">
-                    <Link onClick={()=>{setLink("Home")}} href={"/"} className={`
-                    ${link === "Home" ? "text-green-500" : ""}`}>
-                      HOME
-                    </Link>
-                  </li>
-                  
-                  <li className=" hover:scale-125 hover:text-green-500  duration-200">
-                    <Link onClick={()=>{setLink("About")}} href={"/About"} className={`
-                    ${link === "About" ? "text-green-500" : ""}`}>
-                      ABOUT
-                    </Link>
-                  </li>
-                  <li className=" hover:scale-125 hover:text-green-500  duration-200">
-                    <Link onClick={()=>{setLink("Services")}} href={"/Services"} className={`
-                    ${link === "Services" ? "text-green-500" : ""}`}>
-                      SERVICES
-                    </Link>
-                  </li>
-                  <li className=" hover:scale-125 hover:text-green-500  duration-200">
-                    <Link onClick={()=>{setLink("Rooms")}} href={"/Rooms"} className={`
-                    ${link === "Rooms" ? "text-green-500" : ""}`}>
-                      ROOMS
-                    </Link>
-                  </li>
-                  <li className=" hover:scale-125 hover:text-green-500  duration-200">
-                    <Link onClick={()=>{setLink("BOOKING")}} href={"/Booking"} className={`
-                    ${link === "BOOKING" ? "text-green-500" : ""}`}>
-                      BOOKING
-                    </Link>
-                  </li>
-                  <li className=" hover:scale-125 hover:text-green-500  duration-200">
-                    <Link onClick={()=>{setLink("Contact")}} href={"/Contact"} className={`
-                    ${link === "Contact" ? "text-green-500" : ""}`}>
-                      CONTACT US
-                    </Link>
-                  </li>
-                </ul>
-            </div>
-            {/* SignInWithGoogle */}
-            {!accessToken ?  (
-                    <Link
-                      onClick={() => {
-                        !menu ? setMenu(menu) : setMenu(!menu);
-                      }}
-                      className="rounded-md bg-cyan-800 px-5 py-2.5 text-sm font-medium text-white"
-                      href="/Register"
-                    >
-                      Register
-                    </Link>
-            ): null}
-
-                  {/* LOGOUT */}
-            {accessToken ? (
-              <div className="flex gap-2 items-center">
-                <h1
-                className="md:block hidden"
-              >{`Welcom, ${nameuser}`}</h1>
-                <button title="LogOut "
-                  className="bg-red-500 p-1 rounded-md text-white"
-                  onClick={Logout}
-                >
-                  <LogOut />
-                </button>
-                {accessToken ? null : <img className="rounded-full w-10 border-2 border-yellow-500" src={`${data.user?.image ? data.user?.image : ""}`} alt="" />}
-              </div>
-              
-            ) : null}
-            {/* ICON MENU MOBILE */}
-              <div
-                  onClick={() => {
-                    !menu ? setMenu(!menu) : setMenu(!menu);
-                  }}
-                  className="block md:hidden"
-                >
-                  <button className="rounded bg-gray-100 p-2 text-gray-600 transition hover:text-gray-600/75">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M4 6h16M4 12h16M4 18h16"
-                      />
-                    </svg>
-                  </button>
-              </div>
+            <Link className="flex items-center text-yellow- gap-2 " href="/">
+              <img src={"/Logo-my-hotel-app.png"} width={70} height={10} alt="Logo" />
+              <p className="text-2xl font-bold">EdHotel</p>
+            </Link>
           </div>
         </div>
-        {/* Navbar mobile */}
-        <nav
-          className={`duration-500 bg-white shadow-md border-2  overflow-hidden absolute w-full md:hidden z-10
-          ${menu ? "max-h-52" : "max-h-0"} 
-          ${menu ? "min-h-48" : "min-h-0"} 
-             `}
-        >
-          <ul
-            className={`${menu ? "block " : "hidden "}
-            text-center space-y-3 py-5 text-sm shadow-lg md:hidden `}
-          >
-            <li>
-              <Link
-                onClick={() => {
-                  !menu ? setMenu(!menu) : setMenu(!menu);
-                  setLink("Home");
-                }}
-                className={`${link === "Home" ? "text-green-500" : ""} 
-                  text-gray-500  hover:text-gray-500/75 `}
-                href="/"
-                
-              >
-                {" "}
-                HOME{" "}
-              </Link>
-            </li>
-            <li>
-              <Link
-                onClick={() => {
-                  !menu ? setMenu(!menu) : setMenu(!menu);
-                  setLink("About");
-                }}
-                className={`${link === "About" ? "text-green-500" : ""} 
-                  text-gray-500  hover:text-gray-500/75 `}
-                href="/About"
-                
-              >
-                {" "}
-                ABOUT{" "}
-              </Link>
-            </li>
-            <li>
-              <Link
-                onClick={() => {
-                  !menu ? setMenu(!menu) : setMenu(!menu);
-                  setLink("Services");
-                }}
-                className={`${link === "Services" ? "text-green-500" : ""} 
-                  text-gray-500  hover:text-gray-500/75 `}
-                href="/Services"
-                
-              >
-                {" "}
-                SERVICES{" "}
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                onClick={() => {
-                  !menu ? setMenu(!menu) : setMenu(!menu);
-                  setLink("Rooms");
-                }}
-                className={`${link === "Rooms" ? "text-green-500" : ""} 
-                  text-gray-500  hover:text-gray-500/75 `}
-                href="/Rooms"
-              >
-                {" "}
-                ROOMS{" "}
-              </Link>
-            </li>
-            <li>
-              <Link
-                onClick={() => {
-                  !menu ? setMenu(!menu) : setMenu(!menu);
-                  setLink("BOOKING");
-                }}
-                className={`${link === "BOOKING" ? "text-green-500" : ""} 
-                  text-gray-500  hover:text-gray-500/75 `}
-                href="/Booking"
-              >
-                {" "}
-                BOOKING{" "}
-              </Link>
-            </li>
-
-            <li>
-              <Link
-                onClick={() => {
-                  !menu ? setMenu(!menu) : setMenu(!menu);
-                  setLink("Contact");
-                }}
-                className={`${link === "Contact" ? "text-green-500" : ""} 
-                  text-gray-500  hover:text-gray-500/75 `}
-                href="/Contact"
-              >
-                {" "}
-                CONTACT US{" "}
-              </Link>
-            </li>
-          </ul>
-        </nav>
       </header>
+    );
+  }
+
+  return (
+    <header className="py-1 bg-slate-900 text-yellow-100 shadow-lg border-b border-yellow-100/20 sticky top-0 z-50 backdrop-blur-md">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+          <Link className="flex items-center gap-2 group" href="/">
+            <img
+              src={"/Logo-my-hotel-app.png"}
+              width={70}
+              height={10}
+              alt="Logo"
+              className="group-hover:scale-110 transition-transform duration-300"
+            />
+            <p className="text-2xl font-bold bg-gradient-to-r from-yellow-200 to-amber-500 bg-clip-text text-transparent">
+              EdHotel
+            </p>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:block">
+            <ul className="flex items-center gap-8 text-sm font-medium">
+              {["Home", "About", "Services", "Rooms", "Booking", "Contact"].map((item) => (
+                <li key={item} className="relative group">
+                  <Link
+                    onClick={() => setLink(item)}
+                    href={item === "Home" ? "/" : `/${item}`}
+                    className={`transition-colors duration-300 ${link === item ? "text-amber-400" : "text-gray-300 hover:text-amber-400"
+                      }`}
+                  >
+                    {item.toUpperCase()}
+                  </Link>
+                  <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-400 transition-all duration-300 group-hover:w-full ${link === item ? "w-full" : ""}`}></span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Auth Buttons */}
+          <div className="hidden md:flex items-center gap-4">
+            {!accessToken ? (
+              <div className="flex gap-3">
+                <Link
+                  href="/Login"
+                  className="px-5 py-2 text-sm font-medium text-amber-400 border border-amber-400 rounded-full hover:bg-amber-400 hover:text-slate-900 transition-all duration-300"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/Register"
+                  className="px-5 py-2 text-sm font-medium text-slate-900 bg-amber-400 rounded-full hover:bg-amber-300 hover:shadow-lg hover:shadow-amber-400/20 transition-all duration-300"
+                >
+                  Register
+                </Link>
+              </div>
+            ) : (
+              <div className="flex items-center gap-4 bg-slate-800/50 px-4 py-1.5 rounded-full border border-slate-700">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center text-slate-900 font-bold">
+                    {nameuser ? nameuser.charAt(0).toUpperCase() : <User size={16} />}
+                  </div>
+                  <span className="text-sm font-medium text-gray-200">
+                    {nameuser}
+                  </span>
+                </div>
+                <button
+                  title="LogOut"
+                  className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded-full transition-all duration-300"
+                  onClick={Logout}
+                >
+                  <LogOut size={18} />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden">
+            <button
+              onClick={() => setMenu(!menu)}
+              className="p-2 text-gray-300 hover:text-amber-400 transition-colors"
+            >
+              {menu ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      <div
+        className={`md:hidden absolute w-full bg-slate-900 border-b border-slate-800 shadow-xl transition-all duration-300 ease-in-out overflow-hidden ${menu ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+          }`}
+      >
+        <nav className="px-4 py-6 space-y-4">
+          <ul className="space-y-4 text-center">
+            {["Home", "About", "Services", "Rooms", "Booking", "Contact"].map((item) => (
+              <li key={item}>
+                <Link
+                  onClick={() => {
+                    setMenu(false);
+                    setLink(item);
+                  }}
+                  href={item === "Home" ? "/" : `/${item}`}
+                  className={`block text-lg font-medium transition-colors ${link === item ? "text-amber-400" : "text-gray-400 hover:text-amber-400"
+                    }`}
+                >
+                  {item.toUpperCase()}
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          {/* Mobile Auth */}
+          {!accessToken ? (
+            <div className="flex flex-col gap-3 mt-6 px-8">
+              <Link
+                onClick={() => setMenu(false)}
+                href="/Login"
+                className="w-full py-3 text-center text-amber-400 border border-amber-400 rounded-xl hover:bg-amber-400/10 transition-colors"
+              >
+                Login
+              </Link>
+              <Link
+                onClick={() => setMenu(false)}
+                href="/Register"
+                className="w-full py-3 text-center text-slate-900 bg-amber-400 rounded-xl hover:bg-amber-300 transition-colors"
+              >
+                Register
+              </Link>
+            </div>
+          ) : (
+            <div className="mt-6 px-8 border-t border-slate-800 pt-6">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center text-slate-900 font-bold text-lg">
+                  {nameuser ? nameuser.charAt(0).toUpperCase() : "U"}
+                </div>
+                <span className="text-lg font-medium text-gray-200">{nameuser}</span>
+              </div>
+              <button
+                onClick={Logout}
+                className="w-full py-3 flex items-center justify-center gap-2 text-red-400 border border-red-400/30 rounded-xl hover:bg-red-400/10 transition-colors"
+              >
+                <LogOut size={18} />
+                Logout
+              </button>
+            </div>
+          )}
+        </nav>
+      </div>
+    </header>
   );
 }
 

@@ -84,7 +84,7 @@ export default function RootLayout({ children }) {
   return (
       <html lang="en" className="scroll-smooth">
         <body className={`${prompt.className}`}>
-          <div className="sticky top-0 z-10">
+          <div className="sticky top-0 z-50">
             <Header />
           </div>
           {children}

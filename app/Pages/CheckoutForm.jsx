@@ -16,23 +16,30 @@ const CheckoutForm = ({ amount }) => {
   const [Booking, setBooking] = useState([]);
   const [Bookinge, setBookinge] = useState([]);
   const router = useRouter()
+  const [email, setEmail] = useState(null);
+  
+    useEffect(() => {
+      if (typeof window !== 'undefined') {
+        setEmail(localStorage.getItem("email"));
+      }
+    }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URl}/Booking`);
         setBooking(res.data);
-        setBookinge(res.data.filter((bk) => bk.email === data?.user.email));
+        setBookinge(res.data.filter((bk) => bk.email === email));
       } catch (error) {
         console.error('Error fetching bookings:', error);
       }
     };
 
     fetchData();
-  }, [data]);
+  }, [email]);
 
   const DeleteAllBooking = async () => {
-    const userBookings = Booking.filter((bk) => bk.email === data?.user.email);
+    const userBookings = Booking.filter((bk) => bk.email === email);
 
     try {
       const response = await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URl}/BookingdAll`, {

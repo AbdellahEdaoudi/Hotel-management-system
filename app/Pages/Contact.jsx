@@ -10,10 +10,16 @@ function Contact() {
     const emaill = <img src="email.png" alt="email" width={22} height={11} />;
 
     const [name, setName] = useState(typeof window !== 'undefined' ? localStorage.getItem("nameuser") || "" : "");
-    const [email, setEmail] = useState(typeof window !== 'undefined' ? localStorage.getItem("emailuser") || "" : "");
     const [subject, setSubject] = useState("");
     const [msg, setMsg] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [email, setEmail] = useState(null);
+    
+      useEffect(() => {
+        if (typeof window !== 'undefined') {
+          setEmail(localStorage.getItem("email"));
+        }
+      }, []);
 
     const PostContact = async (e) => {
         e.preventDefault();
@@ -53,7 +59,7 @@ function Contact() {
             setIsLoading(false);
         }
     };
-    
+
     return (
         <div>
             <div className="w-full h-full mt-7 text-center">
@@ -79,8 +85,8 @@ function Contact() {
                 </div>
                 <div className="md:w-1/2 w-full">
                     <nav className="md:flex">
-                        <input value={name}  type="text" placeholder="Your Name" className="mr-3 p-4 mb-5 bg-white text-black rounded-md border w-full" />
-                        <input value={email}  type="text" placeholder="Your Email" className="p-4 mb-5 bg-white text-black rounded-md border w-full" />
+                        <input value={name} onChange={(e) => setName(e.target.value)} type="text" placeholder="Your Name" className="mr-3 p-4 mb-5 bg-white text-black rounded-md border w-full" />
+                        <input value={email} onChange={(e) => setEmail(email)} type="text" placeholder="Your Email" className="p-4 mb-5 bg-white text-black rounded-md border w-full" />
                     </nav>
                     <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject" type="text" className="p-4 mb-5 bg-white text-black rounded-md border w-full" />
                     <textarea value={msg} onChange={(e) => setMsg(e.target.value)} placeholder="Message" className="p-4 bg-white h-36 text-black rounded-md border w-full" />

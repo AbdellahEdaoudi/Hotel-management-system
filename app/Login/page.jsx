@@ -48,6 +48,7 @@ function page() {
         });
         localStorage.setItem("accessToken", userData.accessToken);
         localStorage.setItem("nameuser", userData.name);
+        localStorage.setItem("email", userData.email);
         router.push("/");
       } else {
         console.error(

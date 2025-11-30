@@ -28,6 +28,19 @@ function Page({ params }) {
   const [Booking, setBooking] = useState([]);
   const [Paying, setPaying] = useState([]);
   const [isBooking, setIsBooking] = useState(false);
+  const token = localStorage.getItem("accessToken");
+  const storedName = localStorage.getItem("nameuser");
+  const storedEmail = localStorage.getItem("email");
+
+  useEffect(() => {
+    if (!token) {
+      toast.error("Please register or login to view this room", { type: "error", position: "top-center" });
+      router.push("/Login");
+    } else {
+      if (storedName) setNameC(storedName);
+      if (storedEmail) setEmail(storedEmail);
+    }
+  }, [router]);
 
   useEffect(() => {
     axios.get(`${process.env.NEXT_PUBLIC_SERVER_URl}/Rooms/${params.RoomId}`)
@@ -56,8 +69,8 @@ function Page({ params }) {
     const checkInDateObj = parseISO(check_in);
     const checkOutDateObj = parseISO(check_out);
     const daysDifference = differenceInDays(checkOutDateObj, checkInDateObj);
-    const prixTotal = (isNaN(daysDifference) ? 0 : (rm.prix * daysDifference === 0 ? rm.prix : (rm.prix * 2) * daysDifference)) 
-    < 0 ? 0 : (isNaN(daysDifference) ? 0 : (rm.prix * daysDifference === 0 ? rm.prix : (rm.prix * 2) * daysDifference));
+    const prixTotal = (isNaN(daysDifference) ? 0 : (rm.prix * daysDifference === 0 ? rm.prix : (rm.prix * 2) * daysDifference))
+      < 0 ? 0 : (isNaN(daysDifference) ? 0 : (rm.prix * daysDifference === 0 ? rm.prix : (rm.prix * 2) * daysDifference));
 
     if (!check_in || !check_out) {
       toast.error("Please select both check-in and check-out dates.", { type: "error", position: "top-center", autoClose: 3000 });
@@ -311,6 +324,7 @@ function Page({ params }) {
                   </label>
                   <input
                     type="text"
+                    value={nameC}
                     placeholder="Enter your name"
                     onChange={(e) => setNameC(e.target.value)}
                     className="input-modern w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-orange-500"
@@ -327,8 +341,9 @@ function Page({ params }) {
                   </label>
                   <input
                     type="email"
+                    value={email}
                     placeholder="example@gmail.com"
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => setEmail(email)}
                     className="input-modern w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-xl focus:border-orange-500"
                     required
                   />
