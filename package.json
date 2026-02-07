@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"next dev --webpack\"",
+    "dev": "concurrently \"next dev\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -51,7 +51,10 @@
     "@isaacs/brace-expansion": "^5.0.1",
     "micromatch": "^4.0.8",
     "cross-spawn": "^7.0.6",
-    "braces": "^3.0.3"
+    "braces": "^3.0.3",
+    "glob": "^11.0.0",
+    "rimraf": "^6.0.1",
+    "inflight": "^1.0.6"
   },
   "devDependencies": {
     "@types/react": "18.2.51",
