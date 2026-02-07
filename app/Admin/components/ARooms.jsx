@@ -17,16 +17,18 @@ function ARooms({ setAdmin, theme }) {
   const formRef = useRef(null);
 
   useEffect(() => {
-    setIsLoading(true);
-    axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/rooms`)
-      .then((res) => {
+    const fetchRooms = async () => {
+      setIsLoading(true);
+      try {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/rooms`);
         setdataH(res.data);
-        setIsLoading(false);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error('Error fetching rooms:', error);
+      } finally {
         setIsLoading(false);
-      });
+      }
+    };
+    fetchRooms();
   }, []);
 
   const openDeleteModal = (id) => {

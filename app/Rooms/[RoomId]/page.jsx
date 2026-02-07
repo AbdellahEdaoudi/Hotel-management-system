@@ -26,15 +26,20 @@ function Page() {
 
   useEffect(() => {
     if (!params?.RoomId) return;
-    axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/rooms/${params.RoomId}`)
-      .then(res => {
+
+    const fetchRoom = async () => {
+      setIsLoading(true);
+      try {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/rooms/${params.RoomId}`);
         setRoom(res.data);
-        setIsLoading(false);
-      })
-      .catch(err => {
+      } catch (err) {
         console.error(err);
+      } finally {
         setIsLoading(false);
-      });
+      }
+    };
+
+    fetchRoom();
   }, [params.RoomId]);
 
   const handleBooking = async (e) => {

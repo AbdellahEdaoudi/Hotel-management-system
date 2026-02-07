@@ -16,16 +16,18 @@ function Rooms() {
   const bath = <Image src="/bathtub.png" alt="bath" width={22} height={11} style={{ width: "auto", height: "auto" }} />;
 
   useEffect(() => {
-    setLoading(true);
-    axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/rooms`)
-      .then((res) => {
+    const fetchRooms = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/rooms`);
         setRooms(res.data);
-        setLoading(false);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error fetching rooms:", error);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+    fetchRooms();
   }, []);
 
   return (
