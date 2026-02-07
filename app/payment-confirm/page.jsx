@@ -1,10 +1,10 @@
 "use client";
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-function PaymentConfirm() {
+function PaymentConfirmContent() {
 	const [showConfetti, setShowConfetti] = useState(false);
 	const [confettiItems, setConfettiItems] = useState([]);
 	const [isUpdating, setIsUpdating] = useState(true);
@@ -195,6 +195,18 @@ function PaymentConfirm() {
         }
       `}</style>
 		</div>
+	);
+}
+
+function PaymentConfirm() {
+	return (
+		<Suspense fallback={
+			<div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 flex items-center justify-center">
+				<div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-green-500"></div>
+			</div>
+		}>
+			<PaymentConfirmContent />
+		</Suspense>
 	);
 }
 
