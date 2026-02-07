@@ -30,7 +30,8 @@ function AContact({ theme }) {
 
   const fetchContacts = async () => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/admin/contacts`, {
+      const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
+      const response = await axios.get(`${API_URL}/api/admin/contacts`, {
         withCredentials: true
       });
       setContacts(response.data);
@@ -65,15 +66,17 @@ function AContact({ theme }) {
         // I only added delete one by one. I should probably add delete all or loop.
         // Let's assume loop for safety or I update backend.
         // Actually, let's just loop for now to be safe with the endpoints I created.
+        const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
         const deletePromises = contacts.map(c =>
-          axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/admin/contacts/${c._id}`, {
+          axios.delete(`${API_URL}/api/admin/contacts/${c._id}`, {
             withCredentials: true
           })
         );
         await Promise.all(deletePromises);
         setContacts([]);
       } else {
-        await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/admin/contacts/${deleteModal.id}`, {
+        const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
+        await axios.delete(`${API_URL}/api/admin/contacts/${deleteModal.id}`, {
           withCredentials: true
         });
         setContacts(prev => prev.filter(c => c._id !== deleteModal.id));

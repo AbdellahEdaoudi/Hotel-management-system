@@ -27,7 +27,8 @@ function AddRoom({ setAdmin, theme }) {
     setLoading(true);
     const formData = new FormData(formRef.current);
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/admin/rooms`, formData, {
+      const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
+      const response = await axios.post(`${API_URL}/api/admin/rooms`, formData, {
         withCredentials: true
       });
       toast.success("Room added successfully!", {

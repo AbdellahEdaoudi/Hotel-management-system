@@ -26,8 +26,9 @@ function Contact() {
             }
 
             try {
+                const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
                 const response = await axios.get(
-                    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/contact/user`,
+                    `${API_URL}/api/contact/user`,
                     { withCredentials: true }
                 );
                 setMessages(response.data);
@@ -52,8 +53,9 @@ function Contact() {
     const confirmDelete = async () => {
         setIsDeleting(true);
         try {
+            const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
             if (deleteModal.type === 'all') {
-                await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/contact/user/all`, {
+                await axios.delete(`${API_URL}/api/contact/user/all`, {
                     withCredentials: true
                 });
                 setMessages([]);
@@ -62,7 +64,7 @@ function Contact() {
                     autoClose: 2000,
                 });
             } else {
-                await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/contact/user/${deleteModal.id}`, {
+                await axios.delete(`${API_URL}/api/contact/user/${deleteModal.id}`, {
                     withCredentials: true
                 });
                 setMessages(prevMessages => prevMessages.filter(m => m._id !== deleteModal.id));
@@ -106,8 +108,9 @@ function Contact() {
         setIsLoading(true);
 
         try {
+            const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
             const response = await axios.post(
-                `${process.env.NEXT_PUBLIC_SERVER_URL}/api/contact`,
+                `${API_URL}/api/contact`,
                 { user: user.id, subject, message: msg },
                 {
                     headers: { "Content-Type": "application/json" },

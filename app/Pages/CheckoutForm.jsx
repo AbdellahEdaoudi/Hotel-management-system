@@ -26,7 +26,8 @@ const CheckoutForm = ({ amount }) => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/booking`, {
+        const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
+        const res = await axios.get(`${API_URL}/api/booking`, {
           withCredentials: true
         });
         setBookings(res.data);
@@ -122,15 +123,16 @@ const CheckoutForm = ({ amount }) => {
       } else if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
         // Payment successful - Update booking status
         try {
+          const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
           if (bookingId) {
             await axios.put(
-              `${process.env.NEXT_PUBLIC_SERVER_URL}/api/booking/${bookingId}`,
+              `${API_URL}/api/booking/${bookingId}`,
               { status: 'paid' },
               { withCredentials: true }
             );
           } else {
             await axios.put(
-              `${process.env.NEXT_PUBLIC_SERVER_URL}/api/booking/all`,
+              `${API_URL}/api/booking/all`,
               { status: 'paid' },
               { withCredentials: true }
             );

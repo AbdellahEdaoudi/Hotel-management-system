@@ -33,8 +33,9 @@ function Page() {
 
     setIsLoading(true);
     try {
+      const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/register`,
+        `${API_URL}/api/users/register`,
         { name, email, password },
         {
           headers: { "Content-Type": "application/json" },

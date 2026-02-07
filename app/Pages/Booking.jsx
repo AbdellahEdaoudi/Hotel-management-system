@@ -23,8 +23,9 @@ export function Booking() {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
+        const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/booking`,
+          `${API_URL}/api/booking`,
           { withCredentials: true }
         );
         setBookings(response.data);
@@ -52,14 +53,15 @@ export function Booking() {
   const confirmDelete = async () => {
     setIsDeleting(true);
     try {
+      const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
       if (deleteModal.type === 'all') {
-        await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/booking/all`, {
+        await axios.delete(`${API_URL}/api/booking/all`, {
           withCredentials: true
         });
         // Clear all bookings
         setBookings([]);
       } else {
-        await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/booking/${deleteModal.id}`, {
+        await axios.delete(`${API_URL}/api/booking/${deleteModal.id}`, {
           withCredentials: true
         });
         // Remove the deleted booking from state

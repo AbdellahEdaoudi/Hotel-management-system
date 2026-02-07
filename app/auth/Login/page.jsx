@@ -29,8 +29,9 @@ function Page() {
     }
     setIsLoading(true);
     try {
+      const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/login`,
+        `${API_URL}/api/users/login`,
         { email, password },
         { withCredentials: true }
       );

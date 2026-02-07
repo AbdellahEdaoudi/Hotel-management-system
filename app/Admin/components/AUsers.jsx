@@ -29,7 +29,8 @@ function AUsers({ theme }) {
 
     const fetchUsers = async () => {
         try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/admin/users`, {
+            const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
+            const response = await axios.get(`${API_URL}/api/admin/users`, {
                 withCredentials: true
             });
             setUsers(response.data);
@@ -71,13 +72,14 @@ function AUsers({ theme }) {
 
         setIsSubmitting(true);
         try {
+            const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
             if (isEdit) {
-                await axios.put(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/admin/users/${currentUser._id}`, userData, {
+                await axios.put(`${API_URL}/api/admin/users/${currentUser._id}`, userData, {
                     withCredentials: true
                 });
                 toast.success("User updated successfully", { position: "top-center" });
             } else {
-                await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/admin/users`, userData, {
+                await axios.post(`${API_URL}/api/admin/users`, userData, {
                     withCredentials: true
                 });
                 toast.success("User created successfully", { position: "top-center" });
@@ -95,7 +97,8 @@ function AUsers({ theme }) {
     const handleDelete = async () => {
         setIsDeleting(true);
         try {
-            await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/admin/users/${deleteModal.id}`, {
+            const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
+            await axios.delete(`${API_URL}/api/admin/users/${deleteModal.id}`, {
                 withCredentials: true
             });
             toast.success("User deleted successfully", { position: "top-center" });

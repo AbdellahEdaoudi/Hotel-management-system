@@ -31,7 +31,8 @@ function ABooking({ theme }) {
 
   const fetchBookings = async () => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/admin/bookings`, {
+      const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
+      const response = await axios.get(`${API_URL}/api/admin/bookings`, {
         withCredentials: true
       });
       setBookings(response.data);
@@ -63,15 +64,17 @@ function ABooking({ theme }) {
     try {
       if (deleteModal.type === 'all') {
         // Using loop for safety since I didn't verify a bulk delete endpoint in adminController yet
+        const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
         const deletePromises = bookings.map(b =>
-          axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/admin/bookings/${b._id}`, {
+          axios.delete(`${API_URL}/api/admin/bookings/${b._id}`, {
             withCredentials: true
           })
         );
         await Promise.all(deletePromises);
         setBookings([]);
       } else {
-        await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/admin/bookings/${deleteModal.id}`, {
+        const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
+        await axios.delete(`${API_URL}/api/admin/bookings/${deleteModal.id}`, {
           withCredentials: true
         });
         setBookings(prev => prev.filter(b => b._id !== deleteModal.id));

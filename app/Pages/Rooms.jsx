@@ -19,7 +19,8 @@ function Rooms() {
     const fetchRooms = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/rooms`);
+        const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
+        const res = await axios.get(`${API_URL}/api/rooms`);
         setRooms(res.data);
       } catch (error) {
         console.error("Error fetching rooms:", error);

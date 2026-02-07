@@ -20,7 +20,8 @@ function ARooms({ setAdmin, theme }) {
     const fetchRooms = async () => {
       setIsLoading(true);
       try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/rooms`);
+        const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
+        const res = await axios.get(`${API_URL}/api/rooms`);
         setdataH(res.data);
       } catch (error) {
         console.error('Error fetching rooms:', error);
@@ -42,7 +43,8 @@ function ARooms({ setAdmin, theme }) {
   const confirmDelete = async () => {
     setDeletingId(deleteModal.id);
     try {
-      await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/admin/rooms/${deleteModal.id}`, {
+      const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
+      await axios.delete(`${API_URL}/api/admin/rooms/${deleteModal.id}`, {
         withCredentials: true
       });
       setdataH(prevRooms => prevRooms.filter(room => room._id !== deleteModal.id));
@@ -88,11 +90,12 @@ function ARooms({ setAdmin, theme }) {
     const formData = new FormData(formRef.current);
 
     try {
-      await axios.put(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/admin/rooms/${editModal.room._id}`, formData, {
+      const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
+      await axios.put(`${API_URL}/api/admin/rooms/${editModal.room._id}`, formData, {
         withCredentials: true
       });
 
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/rooms`);
+      const res = await axios.get(`${API_URL}/api/rooms`);
       setdataH(res.data);
 
       toast.success("Room updated successfully!", {

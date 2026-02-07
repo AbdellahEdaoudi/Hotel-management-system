@@ -30,7 +30,8 @@ function Page() {
     const fetchRoom = async () => {
       setIsLoading(true);
       try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/rooms/${params.RoomId}`);
+        const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
+        const res = await axios.get(`${API_URL}/api/rooms/${params.RoomId}`);
         setRoom(res.data);
       } catch (err) {
         console.error(err);
@@ -82,8 +83,9 @@ function Page() {
     }
 
     try {
+      const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/booking`,
+        `${API_URL}/api/booking`,
         { user: user.id, room: room._id, prix: prixTotal, check_in: checkInDate, check_out: checkOutDate },
         {
           headers: {
