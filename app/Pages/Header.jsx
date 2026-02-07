@@ -13,7 +13,7 @@ function Header({ page }) {
     <header className="py-1 bg-slate-900 text-yellow-100 shadow-lg border-b border-yellow-100/20 sticky top-0 z-50 backdrop-blur-md">
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          <Link className="flex items-center group gap-2" href="/">
+          <Link className="flex items-center group" href="/">
             <Image
               src={"/Images/logowb.png"}
               width={70}
@@ -83,7 +83,7 @@ function Header({ page }) {
           </div>
 
           {/* Mobile Actions */}
-          <div className="md:hidden flex items-center gap-3">
+          <div className="md:hidden flex items-center">
             {/* Mobile Auth Buttons */}
             {!user && (
               <div className="flex items-center gap-3 mr-2">

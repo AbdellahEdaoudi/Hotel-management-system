@@ -128,7 +128,7 @@ function Footer() {
               </div>
             </div>
           </div>
-          <p className="text-xs text-gray-500">© 2024. EdHotel. All rights reserved.</p>
+          <p className="text-xs text-gray-500">© {new Date().getFullYear()}. EdHotel. All rights reserved.</p>
         </div>
       </footer>
     </div>

@@ -10,10 +10,10 @@ function Rooms() {
   const [filterType, setFilterType] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const star = <Image src="/star.png" alt="star" width={22} height={11} style={{ width: "auto", height: "auto" }} />;
-  const bed = <Image src="/sleeping.png" alt="bed" width={22} height={11} style={{ width: "auto", height: "auto" }} />;
-  const wifi = <Image src="/wifi.png" alt="wifi" width={22} height={11} style={{ width: "auto", height: "auto" }} />;
-  const bath = <Image src="/bathtub.png" alt="bath" width={22} height={11} style={{ width: "auto", height: "auto" }} />;
+  const star = <Image src="/star.png" alt="star" width={20} height={20} className="w-5 h-5 object-contain" />;
+  const bed = <Image src="/sleeping.png" alt="bed" width={20} height={20} className="w-5 h-5 object-contain" />;
+  const wifi = <Image src="/wifi.png" alt="wifi" width={20} height={20} className="w-5 h-5 object-contain" />;
+  const bath = <Image src="/bathtub.png" alt="bath" width={20} height={20} className="w-5 h-5 object-contain" />;
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -53,13 +53,16 @@ function Rooms() {
           (filterType === "" ? rooms : rooms.filter((room) => room.type === filterType)).map((room, i) => (
             <div className="bg-white rounded-md shadow-md border pb-4" key={i} >
               <nav className="relative h-48">
-                <Image src={room.imageUrl} alt={room.name} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover rounded-t-md" />
-                <span className="absolute bottom-0 left-4 px-2 py-1 bg-amber-500 text-sm text-white rounded-md z-10">{room.prix}$/night</span>
+                <Link href={`/Rooms/${room._id}`}>
+                  <Image src={room.imageUrl} alt={room.name} fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover rounded-t-md" />
+                </Link>
+                <span className="absolute -bottom-2 left-4 px-2 py-1 bg-amber-500 text-sm text-white rounded-md z-10">{room.prix}$/night</span>
               </nav>
-              <div className="px-5">
-                <p className="pt-4 flex justify-between text-black text-xl font-bold mb-3">
+              <div className="px-4">
+                <p className="pt-4 flex items-center justify-between text-black text-xl font-bold mb-3">
                   <span className='line-clamp-1'>{room.name}</span>
-                  <span className="flex gap-1">{star}{star}{star}{star}{star}</span>
+                  <span className="flex gap-1 mr-4">{star}{star}{star}{star}{star}</span>
                 </p>
                 <div className="flex space-x-3 text-gray-800">
                   <span className="flex gap-1 items-center ">{bed} {room.capacity} bed |</span>
