@@ -2,74 +2,64 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import Axios from "axios";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import LoadingButton from "../../Components/Loading/LoadingButton";
+import { useUser } from "../../context/UserContext";
+import Header from "../../Pages/Header";
 
-function page() {
+function Page() {
+  const { setUser } = useUser();
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("@hotel.app");
-  const [pass, setPass] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [ereur, setEreur] = useState("");
-  const [goodCreat, setgoodCreat] = useState("");
   const router = useRouter();
 
-  const CreateAcount = async (e) => {
+  const CreateAccount = async (e) => {
     e.preventDefault();
 
-    if (!name || !email || !pass) {
-      setEreur("All fields are necessary.");
+    if (!name || !email || !password) {
+      toast("All fields are necessary.", {
+        type: "error",
+        position: "top-center",
+        autoClose: 3000,
+      });
       return;
     }
 
     setIsLoading(true);
-
-    // Hash the password
     try {
-      const response = await Axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URl}/register`,
-        { name, email, pass },
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/register`,
+        { name, email, password },
         {
           headers: { "Content-Type": "application/json" },
+          withCredentials: true,
         }
       );
       if (response.status === 200) {
         const data = response.data;
-        // alert('User registered successfully.')
         console.log("User registered successfully:", data);
-        setName("");
-        setEmail("");
-        setPass("");
-        // setgoodCreat("");
-        toast("User registered successfully.", {
-          type: "success", // Can be 'success', 'error', 'info', etc.
-          position: "top-center", // Adjust position as needed
-          autoClose: 3000, // Milliseconds before auto-dismissal
+        toast("User registered successfully!", {
+          type: "success",
+          position: "top-center",
+          autoClose: 2000,
         });
-        router.push("Login");
-      } else {
-        console.error(
-          "Registration failed. Server returned:",
-          response.status,
-          response.statusText
-        );
-        // setEreur("Registration failed. Please try again.");
-        toast("Registration failed. Please try again.", {
-          type: "error", // Can be 'success', 'error', 'info', etc.
-          position: "top-center", // Adjust position as needed
-          autoClose: 3000, // Milliseconds before auto-dismissal
-        });
+        setTimeout(() => {
+          router.push("/auth/Login");
+        }, 2000);
       }
     } catch (error) {
       console.error("Error during registration:", error);
-      // setEreur("Email already exists. Please use a different email.");
-      toast("Email already exists. Please use a different email.", {
-        type: "error", // Can be 'success', 'error', 'info', etc.
-        position: "top-center", // Adjust position as needed
-        autoClose: 3000, // Milliseconds before auto-dismissal
+      const errorMessage = error.response?.data?.message || "Registration failed. Please try again.";
+      toast(errorMessage, {
+        type: "error",
+        position: "top-center",
+        autoClose: 3000,
       });
     } finally {
       setIsLoading(false);
@@ -77,60 +67,17 @@ function page() {
   };
 
   return (
-    <div style={{ backgroundImage: `url('image.jpg')` }}
-      className="flex items-center  justify-center  bg-gray-50 text-black -mt-20">
-      <style jsx>{`
-        .glass-card {
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(251, 146, 60, 0.2);
-          box-shadow: 0 20px 40px rgba(249, 115, 22, 0.15);
-        }
-        
-        .input-field {
-          transition: all 0.3s ease;
-        }
-        
-        .input-field:focus {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 16px rgba(249, 115, 22, 0.2);
-          border-color: #f97316;
-        }
-        
-        .btn-primary {
-          background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-          transition: all 0.3s ease;
-        }
-        
-        .btn-primary:hover:not(:disabled) {
-          transform: translateY(-2px);
-          box-shadow: 0 12px 24px rgba(249, 115, 22, 0.4);
-        }
-        
-        .btn-primary:active:not(:disabled) {
-          transform: translateY(0);
-        }
-        
-        .logo-container {
-          animation: float 3s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
-        }
-      `}</style>
-
-      <div className="glass-card rounded-2xl p-6 md:p-8 w-full max-w-md mt-[108px] mb-8">
+    <div>
+      <div className="sticky top-0 z-50">
+        <Header page="Register"/>
+      </div>
+    <div style={{ backgroundImage: `url('/image.jpg')` }}
+      className="flex items-start  justify-center min-h-screen  bg-gray-50 text-black -mt-20">
+      <div className="bg-white/95 backdrop-blur-[20px] border border-orange-400/20 shadow-[0_20px_40px_rgba(249,115,22,0.15)] rounded-2xl p-6 md:p-8 w-full max-w-md mt-[108px] mb-8">
         {/* Logo */}
-        <div className="text-center mb-4 logo-container">
-          <Image
-            src="/Images/logo.png"
-            className="mx-auto"
-            alt="Hotel Logo"
-            height={80}
-            width={80}
-          />
+        <div className="text-center mb-4 animate-[float_3s_ease-in-out_infinite]">
+          <Image src="/Images/logo.png" className="mx-auto"
+            alt="Hotel Logo" height={80} width={80} />
         </div>
 
         {/* Header */}
@@ -144,7 +91,7 @@ function page() {
         </div>
 
         {/* Form */}
-        <form onSubmit={CreateAcount} className="space-y-3">
+        <form onSubmit={CreateAccount} className="space-y-3">
           {/* Name Input */}
           <div>
             <label className="text-xs font-semibold text-gray-700 mb-1 flex items-center gap-1">
@@ -157,7 +104,7 @@ function page() {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="input-field w-full px-3 py-2.5 bg-white border-2 border-gray-200 rounded-xl text-gray-800 text-sm placeholder-gray-400 focus:border-orange-500 focus:outline-none"
+              className="w-full px-3 py-2.5 bg-white border-2 border-gray-200 rounded-xl text-gray-800 text-sm placeholder-gray-400 focus:border-orange-500 focus:outline-none transition-all duration-300 focus:-translate-y-0.5 focus:shadow-[0_8px_16px_rgba(249,115,22,0.2)]"
               placeholder="Enter your full name"
               required
             />
@@ -175,8 +122,8 @@ function page() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="input-field w-full px-3 py-2.5 bg-white border-2 border-gray-200 rounded-xl text-gray-800 text-sm placeholder-gray-400 focus:border-orange-500 focus:outline-none"
-              placeholder="example@hotel.app"
+              className="w-full px-3 py-2.5 bg-white border-2 border-gray-200 rounded-xl text-gray-800 text-sm placeholder-gray-400 focus:border-orange-500 focus:outline-none transition-all duration-300 focus:-translate-y-0.5 focus:shadow-[0_8px_16px_rgba(249,115,22,0.2)]"
+              placeholder="example@gmail.com"
               required
             />
           </div>
@@ -192,9 +139,9 @@ function page() {
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                value={pass}
-                onChange={(e) => setPass(e.target.value)}
-                className="input-field w-full px-3 py-2.5 bg-white border-2 border-gray-200 rounded-xl text-gray-800 text-sm placeholder-gray-400 focus:border-orange-500 focus:outline-none pr-10"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-3 py-2.5 bg-white border-2 border-gray-200 rounded-xl text-gray-800 text-sm placeholder-gray-400 focus:border-orange-500 focus:outline-none pr-10 transition-all duration-300 focus:-translate-y-0.5 focus:shadow-[0_8px_16px_rgba(249,115,22,0.2)]"
                 placeholder="Enter your password"
                 required
               />
@@ -218,19 +165,13 @@ function page() {
           </div>
 
           {/* Submit Button */}
-          <button
+          <LoadingButton
             type="submit"
-            disabled={isLoading}
-            className="btn-primary w-full py-3 rounded-xl text-white font-bold text-base shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-4"
+            isLoading={isLoading}
+            className="w-full py-3 rounded-xl text-white font-bold text-base shadow-lg flex items-center justify-center gap-2 mt-4 bg-gradient-to-br from-orange-500 to-orange-600 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(249,115,22,0.4)] active:translate-y-0"
           >
             {isLoading ? (
-              <>
-                <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Creating Account...
-              </>
+              "Creating Account..."
             ) : (
               <>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -239,14 +180,14 @@ function page() {
                 Create Account
               </>
             )}
-          </button>
+          </LoadingButton>
 
           {/* Login Link */}
           <div className="text-center pt-2">
             <p className="text-gray-600 text-xs">
               Already have an account?{" "}
               <Link
-                href="/Login"
+                href="/auth/Login"
                 className="text-orange-600 hover:text-orange-700 font-semibold underline decoration-2 underline-offset-2 transition-colors"
               >
                 Log in
@@ -257,7 +198,8 @@ function page() {
       </div>
       <ToastContainer />
     </div>
+    </div>
   );
 }
 
-export default page;
+export default Page;

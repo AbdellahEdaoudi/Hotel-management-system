@@ -2,11 +2,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
-import { FolderDot, LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { FolderDot, LogOut } from "../../Components/lucide-react";
+import { useRouter, useParams } from "next/navigation";
 
-function Page({ params }) {
+function Page() {
   const router = useRouter();
+  const params = useParams();
   const formRef = useRef(null);
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("");
@@ -16,11 +17,16 @@ function Page({ params }) {
   const [id, setid] = useState("");
   const [check_in, setcheck_in] = useState("");
   const [check_out, setcheck_out] = useState("");
-  const [because,setBecause]=useState('');
-  const [loading,setloading]=useState(false);
+  const [because, setBecause] = useState('');
+  const [loading, setloading] = useState(false);
+  const [loadingData, setLoadingData] = useState(true);
 
   useEffect(() => {
-    axios.get(`${process.env.NEXT_PUBLIC_SERVER_URl}/Checkout/${params.payId}`)
+    if (!params?.payId) return;
+    setLoadingData(true);
+    // Note: /api/checkout might be 404 after backend refactor. 
+    // This frontend code still expects it. User should be aware.
+    axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/checkout/${params.payId}`)
       .then((res) => {
         setEmail(res.data.email);
         setSubject(`Cancellation Of Paynig`);
@@ -29,8 +35,8 @@ function Page({ params }) {
         setid(res.data._id);
         const checkInDate = new Date(res.data.check_in);
         const checkOutDate = new Date(res.data.check_out);
-        const checkInString = `${checkInDate.getFullYear()}-${checkInDate.getMonth() + 1}-${checkInDate.getDay()}`;
-        const checkOutString = `${checkOutDate.getFullYear()}-${checkOutDate.getMonth() + 1}-${checkOutDate.getDay()}`;
+        const checkInString = `${checkInDate.getFullYear()}-${checkInDate.getMonth() + 1}-${checkInDate.getDate()}`;
+        const checkOutString = `${checkOutDate.getFullYear()}-${checkOutDate.getMonth() + 1}-${checkOutDate.getDate()}`;
         setcheck_in(checkInString);
         setcheck_out(checkOutString);
         setHtml(
@@ -39,20 +45,23 @@ function Page({ params }) {
            from <span style="color: #D97706;">${checkInString}</span>
             to <span style="color: #D97706;">${checkOutString}</span>
              has been cancelled`
-        );})
+        );
+        setLoadingData(false);
+      })
       .catch((error) => {
-        console.error('Error fetching contact:', error);
+        console.error('Error fetching checkout:', error);
+        setLoadingData(false);
       });
   }, [params.payId]);
 
   const Delete = async (id) => {
-      try {
-        const response = await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URl}/Checkout/${id}`);
-        console.log(response.data.message);
-        setBookings(bookings.filter(booking => booking._id !== id));
-      } catch (error) {
-        console.error(`Error deleting booking with ID ${id}:`, error);
-      }
+    try {
+      const response = await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/checkout/${id}`);
+      console.log(response.data.message);
+      // setBookings(bookings.filter(booking => booking._id !== id));
+    } catch (error) {
+      console.error(`Error deleting booking with ID ${id}:`, error);
+    }
   };
 
   const sendEmail = async (e) => {
@@ -128,10 +137,10 @@ function Page({ params }) {
     </html>
   `;
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URl}/SendEmail`, {
+      await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/email/send`, {
         to: email,
         subject,
-        html : printContent,
+        html: printContent,
       });
       Delete(id);
       toast("Email sent successfully", {
@@ -151,10 +160,14 @@ function Page({ params }) {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("accessTokenAdmin");
-    router.push("/AdminLogin");
-  };
+
+  if (loadingData) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-slate-900">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-amber-400"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex border-b-2">

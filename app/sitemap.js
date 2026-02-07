@@ -31,13 +31,13 @@ export default function sitemap() {
             priority: 0.5,
         },
         {
-            url: 'https://edhotel.vercel.app/Login',
+            url: 'https://edhotel.vercel.app/auth/Login',
             lastModified: new Date(),
             changeFrequency: 'yearly',
             priority: 0.5,
         },
         {
-            url: 'https://edhotel.vercel.app/Register',
+            url: 'https://edhotel.vercel.app/auth/Register',
             lastModified: new Date(),
             changeFrequency: 'yearly',
             priority: 0.5,

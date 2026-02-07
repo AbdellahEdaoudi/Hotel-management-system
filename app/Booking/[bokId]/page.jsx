@@ -2,11 +2,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
-import { FolderDot, LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { FolderDot, LogOut } from "../../Components/lucide-react";
+import { useRouter, useParams } from "next/navigation";
+import LoadingButton from "../../Components/Loading/LoadingButton";
+import Skeleton from "../../Components/Loading/Skeleton";
+import { useUser } from "@/app/context/UserContext";
 
-function Page({ params }) {
+function Page() {
   const router = useRouter();
+  const params = useParams();
   const formRef = useRef(null);
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("");
@@ -16,11 +20,15 @@ function Page({ params }) {
   const [id, setid] = useState("");
   const [check_in, setcheck_in] = useState("");
   const [check_out, setcheck_out] = useState("");
-  const [because,setBecause]=useState('')
-  const [loading,setloading]=useState(false);
+  const [because, setBecause] = useState('')
+  const [loading, setloading] = useState(false);
+  const [loadingData, setLoadingData] = useState(true);
+  const {logout}=useUser()
 
   useEffect(() => {
-    axios.get(`${process.env.NEXT_PUBLIC_SERVER_URl}/Booking/${params.bokId}`)
+    if (!params?.bokId) return;
+    setLoadingData(true);
+    axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/booking/${params.bokId}`)
       .then((res) => {
         setEmail(res.data.email);
         setSubject(`Cancellation Of Booking`);
@@ -29,30 +37,33 @@ function Page({ params }) {
         setid(res.data._id);
         const checkInDate = new Date(res.data.check_in);
         const checkOutDate = new Date(res.data.check_out);
-        const checkInString = `${checkInDate.getFullYear()}-${checkInDate.getMonth() + 1}-${checkInDate.getDay()}`;
-        const checkOutString = `${checkOutDate.getFullYear()}-${checkOutDate.getMonth() + 1}-${checkOutDate.getDay()}`;
+        const checkInString = `${checkInDate.getFullYear()}-${checkInDate.getMonth() + 1}-${checkInDate.getDate()}`;
+        const checkOutString = `${checkOutDate.getFullYear()}-${checkOutDate.getMonth() + 1}-${checkOutDate.getDate()}`;
         setcheck_in(checkInString);
         setcheck_out(checkOutString);
         setHtml(
           `Your reservation
           for the <span style="color: #D97706;">${res.data.nameR}</span> room
-           from <span style="color: #D97706;">${checkInString}</span>
-            to <span style="color: #D97706;">${checkOutString}</span>
-             has been cancelled`
-        );})
+          from <span style="color: #D97706;">${checkInString}</span>
+          to <span style="color: #D97706;">${checkOutString}</span>
+          has been cancelled`
+        );
+        setLoadingData(false);
+      })
       .catch((error) => {
-        console.error('Error fetching contact:', error);
+        console.error('Error fetching booking:', error);
+        setLoadingData(false);
       });
   }, [params.bokId]);
 
   const Delete = async (id) => {
-      try {
-        const response = await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URl}/Booking/${id}`);
-        console.log(response.data.message);
-        setBookings(bookings.filter(booking => booking._id !== id));
-      } catch (error) {
-        console.error(`Error deleting booking with ID ${id}:`, error);
-      }
+    try {
+      const response = await axios.delete(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/booking/${id}`);
+      console.log(response.data.message);
+      // setBookings(bookings.filter(booking => booking._id !== id)); // bookings not defined here
+    } catch (error) {
+      console.error(`Error deleting booking with ID ${id}:`, error);
+    }
   };
 
   const sendEmail = async (e) => {
@@ -128,14 +139,14 @@ function Page({ params }) {
     </html>
   `;
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URl}/SendEmail`, {
+      await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/email/send`, {
         to: email,
         subject,
-        html : printContent,
+        html: printContent,
       });
       Delete(id);
       toast("Email sent successfully", {
-       
+
       });
       setTimeout(() => { router.push('/Admin') }, 2000);
     } catch (error) {
@@ -147,11 +158,6 @@ function Page({ params }) {
       });
       setloading(false)
     }
-  };
-
-  const logout = () => {
-    localStorage.removeItem("accessTokenAdmin");
-    router.push("/AdminLogin");
   };
 
   return (
@@ -180,38 +186,52 @@ function Page({ params }) {
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }} className="flex flex-col p-6 w-full justify-center items-center ">
-        <form ref={formRef} onSubmit={sendEmail} className="flex flex-col space-y-4 p-12 text-black backdrop-blur-sm rounded-md">
-          <div className="text-center text-white text-3xl">Cancel Booking For {(name).split(' ')[0]}</div>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            name="email"
-            placeholder="Email to"
-            required
-            className="bg-white p-3 border border-black rounded-md w-[600px]"
-          />
-          <input
-            type="text"
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-            name="subject"
-            placeholder="Subject"
-            required
-            className="bg-white p-3 border border-black rounded-md"
-          />
-          <textarea
-            name="html"
-            value={because}
-            onChange={(e) => setBecause(e.target.value)}
-            placeholder="Reason"
-            required
-            className="bg-white p-3 border border-black rounded-md"
-          />
-          <button type="submit" disabled={loading} className="p-4 bg-yellow-500 text-black rounded-md">
-            {loading ? "Sending..." : "Send Email"}
-          </button>
-        </form>
+        {loadingData ? (
+          <div className="flex flex-col space-y-4 p-12 backdrop-blur-sm rounded-md w-[650px] bg-white/30">
+            <Skeleton className="h-8 w-64 mx-auto bg-white/50" />
+            <Skeleton className="h-12 w-full bg-white/70" />
+            <Skeleton className="h-12 w-full bg-white/70" />
+            <Skeleton className="h-24 w-full bg-white/70" />
+            <Skeleton className="h-14 w-full bg-white/70" />
+          </div>
+        ) : (
+          <form ref={formRef} onSubmit={sendEmail} className="flex flex-col space-y-4 p-12 text-black backdrop-blur-sm rounded-md">
+            <div className="text-center text-white text-3xl">Cancel Booking For {(name || "").split(' ')[0]}</div>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              name="email"
+              placeholder="Email to"
+              required
+              className="bg-white p-3 border border-black rounded-md w-[600px]"
+            />
+            <input
+              type="text"
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              name="subject"
+              placeholder="Subject"
+              required
+              className="bg-white p-3 border border-black rounded-md"
+            />
+            <textarea
+              name="html"
+              value={because}
+              onChange={(e) => setBecause(e.target.value)}
+              placeholder="Reason"
+              required
+              className="bg-white p-3 border border-black rounded-md"
+            />
+            <LoadingButton
+              type="submit"
+              isLoading={loading}
+              className="p-4 bg-yellow-500 text-black rounded-md font-bold hover:bg-yellow-600"
+            >
+              {loading ? "Sending..." : "Send Email"}
+            </LoadingButton>
+          </form>
+        )}
         <ToastContainer />
       </div>
     </div>

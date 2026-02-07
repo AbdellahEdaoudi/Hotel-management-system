@@ -1,9 +1,9 @@
-import Head from 'next/head';
 import { Inter, Prompt } from 'next/font/google';
 import './globals.css';
 import Header from './Pages/Header';
 import Footer from './Pages/Footer';
 import 'animate.css';
+import { UserProvider } from './context/UserContext';
 
 const inter = Inter({ subsets: ['latin'] });
 const prompt = Prompt({ subsets: ['latin'], weight: '400' });
@@ -93,13 +93,6 @@ export const metadata = {
   category: 'technology',
 };
 
-export const viewport = {
-  themeColor: 'black',
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
-};
-
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="scroll-smooth">
@@ -108,47 +101,46 @@ export default function RootLayout({ children }) {
         <meta name="google-site-verification" content="your-verification-code" />
       </head>
       <body className={`${prompt.className}`}>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Hotel",
-              "name": "EdHotel",
-              "description": "Premium Hotel Management System",
-              "url": "https://edhotel.vercel.app",
-              "logo": "https://edhotel.vercel.app/Images/logo.png",
-              "image": "https://res.cloudinary.com/dynprvsfg/image/upload/v1717421518/wprm2rcy3qvhn1jvc1wk.png",
-              "telephone": "+212607071966",
-              "email": "abdellahedaoudi80@gmail.com",
-              "address": {
-                "@type": "PostalAddress",
-                "streetAddress": "Hay Lwahda 1",
-                "addressLocality": "Laayoune",
-                "addressRegion": "Laayoune",
-                "postalCode": "70000",
-                "addressCountry": "MA"
-              },
-              "sameAs": [
-                "https://www.linkedin.com/in/abdellah-edaoudi-0bbba02a5/",
-                "https://abdellah-edaoudi.vercel.app",
-                "https://www.instagram.com/edaoudi_abdellah/",
-                "https://www.tiktok.com/@edaoudi_abdellah"
-              ],
-              "priceRange": "$$",
-              "aggregateRating": {
-                "@type": "AggregateRating",
-                "ratingValue": "4.8",
-                "reviewCount": "4657"
-              }
-            })
-          }}
-        />
-        <div className="sticky top-0 z-50">
-          <Header />
-        </div>
-        {children}
-        <Footer />
+        <UserProvider>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Hotel",
+                "name": "EdHotel",
+                "description": "Premium Hotel Management System",
+                "url": "https://edhotel.vercel.app",
+                "logo": "https://edhotel.vercel.app/Images/logo.png",
+                "image": "https://res.cloudinary.com/dynprvsfg/image/upload/v1717421518/wprm2rcy3qvhn1jvc1wk.png",
+                "telephone": "+212607071966",
+                "email": "abdellahedaoudi80@gmail.com",
+                "address": {
+                  "@type": "PostalAddress",
+                  "streetAddress": "Hay Lwahda 1",
+                  "addressLocality": "Laayoune",
+                  "addressRegion": "Laayoune",
+                  "postalCode": "70000",
+                  "addressCountry": "MA"
+                },
+                "sameAs": [
+                  "https://www.linkedin.com/in/abdellah-edaoudi-0bbba02a5/",
+                  "https://abdellah-edaoudi.vercel.app",
+                  "https://www.instagram.com/edaoudi_abdellah/",
+                  "https://www.tiktok.com/@edaoudi_abdellah"
+                ],
+                "priceRange": "$$",
+                "aggregateRating": {
+                  "@type": "AggregateRating",
+                  "ratingValue": "4.8",
+                  "reviewCount": "4657"
+                }
+              })
+            }}
+          />
+          
+          {children}
+        </UserProvider>
       </body>
     </html>
   );

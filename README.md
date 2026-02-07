@@ -60,7 +60,7 @@ npm run dev
 Create a `.env.local` file in the root directory:
 
 ```env
-NEXT_PUBLIC_SERVER_URl=your_backend_url
+NEXT_PUBLIC_SERVER_URL=your_backend_url
 SITE_URL=https://edhotel.vercel.app
 ```
 

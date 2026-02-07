@@ -1,42 +1,39 @@
 "use client";
-import React from 'react'
-import { School, UsersRound, Users } from "lucide-react"
+import React from 'react';
+import Image from 'next/image';
+
 function About() {
   return (
-    <div>
-      {/* ABOUT */}
-      <div className="flex flex-col-reverse md:flex md:flex-row-reverse mx-5 md:mx-32 py-16 justify-between items-center">
-        <div className=" md:w-1/2   text-black">
-          <div className="font-bold text-yellow-500 text-xl mb-4">__--- ABOUT US---__</div>
-          <div className="text-4xl  mb-8 font-bold ">Welcome to <span className="text-yellow-500">EDHOTEL</span></div>
-          <div className="mb-6 text-gray-600">
-            In our application, we strive to provide a unique and distinctive
-            experience to our valued guests. We pride ourselves on providing exceptional
-            service and excellent facilities to ensure your comfort and well-being during your stay with us.
-          </div>
-          <div className="flex w-full justify-between mb-6 gap-2">
-            <div className="w-full h-36  border-2 rounded-md flex flex-col items-center justify-center space-y-2 ">
-              <span className="text-yellow-600"><School />    </span>
-              <span className="text-3xl "> +164 </span><span>Rooms</span>
-            </div>
-            <div className="w-full h-36  border-2 rounded-md flex flex-col items-center justify-center space-y-2 ">
-              <span className="text-yellow-600"><Users />     </span>
-              <span className="text-3xl "> +78 </span><span>Staffs</span>
-            </div>
-            <div className="w-full h-36  border-2 rounded-md flex flex-col items-center justify-center space-y-2 ">
-              <span className="text-yellow-600"><UsersRound /></span>
-              <span className="text-3xl "> 4657 </span><span>Clients</span>
-            </div>
-          </div>
-        </div>
-        <div>
-          <img src="about-1.jpg" alt="EdHotel Facilities and Services" className=" rounded-md md:mb-0 mb-8" />
+    <div className="pb-10">
+      <div className="w-full h-full mt-6 text-center pb-5">
+        <div className="text-amber-400 mb-2 text-xl font-bold">__---- ABOUT US ----__</div>
+        <div className="md:text-4xl text-3xl text-black font-bold">
+          Welcome to <span className="text-amber-400">EdHotel</span>
         </div>
       </div>
-
-
+      <div className="grid md:grid-cols-2 grid-cols-1 gap-8 mx-7 md:mx-16">
+        <div>
+          <p className="text-gray-700 text-lg leading-relaxed mb-4">
+            EdHotel is a premier luxury hotel offering world-class amenities and exceptional service.
+            Our mission is to provide guests with an unforgettable experience, combining comfort,
+            elegance, and modern convenience.
+          </p>
+          <p className="text-gray-700 text-lg leading-relaxed mb-4">
+            With state-of-the-art facilities, gourmet dining options, and personalized services,
+            we ensure that every stay is memorable. Whether you're here for business or leisure,
+            EdHotel is your home away from home.
+          </p>
+          <p className="text-gray-700 text-lg leading-relaxed">
+            Our dedicated team is committed to exceeding your expectations and making your visit
+            truly special. Experience the difference at EdHotel.
+          </p>
+        </div>
+        <div className="relative h-64 md:h-auto">
+          <Image src="/about-1.jpg" alt="EdHotel Facilities and Services" fill className="rounded-md object-cover" />
+        </div>
+      </div>
     </div>
-  )
+  );
 }
 
-export default About
+export default About;

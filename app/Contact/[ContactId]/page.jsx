@@ -2,11 +2,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
-import { FolderDot, LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { FolderDot, LogOut } from "../../Components/lucide-react";
+import { useRouter, useParams } from "next/navigation";
+import { useUser } from "@/app/context/UserContext";
 
-function Page({ params }) {
+function Page() {
   const router = useRouter();
+  const params = useParams();
   const formRef = useRef(null);
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("Edhotel Contact");
@@ -14,19 +16,27 @@ function Page({ params }) {
   const [msg, setmsg] = useState("");
   const [html, setHtml] = useState("");
   const [name, setName] = useState("");
-  const [loading,setloading]=useState(false);
+  const [loading, setloading] = useState(false);
+  const [loadingData, setLoadingData] = useState(true);
+  const {logout}=useUser()
 
   useEffect(() => {
-    axios.get(`${process.env.NEXT_PUBLIC_SERVER_URl}/Contact/${params.ContactId}`)
+    if (!params?.ContactId) return;
+    setLoadingData(true);
+    axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/admin/contacts/${params.ContactId}`, {
+      withCredentials: true
+    })
       .then((res) => {
         setEmail(res.data.email);
         setSubject("Edhotel Contact");
         setSubjectt(res.data.subject);
         setmsg(res.data.msg)
         setName(res.data.name)
+        setLoadingData(false);
       })
       .catch((error) => {
         console.error('Error fetching contact:', error);
+        setLoadingData(false);
       });
   }, [params.ContactId]);
 
@@ -113,17 +123,17 @@ function Page({ params }) {
   `;
 
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URl}/SendEmail`, {
+      await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/email/send`, {
         to: email,
         subject,
-        html : printContent,
+        html: printContent,
       });
       toast("Email sent successfully", {
         type: "success",
         position: "top-center",
         autoClose: 1000,
       });
-      setTimeout(()=>{router.push('/Admin')},2000)
+      setTimeout(() => { router.push('/Admin') }, 2000)
     } catch (error) {
       console.error("Error sending email:", error);
       toast("Failed to send email", {
@@ -135,10 +145,13 @@ function Page({ params }) {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("accessTokenAdmin");
-    router.push("/AdminLogin");
-  };
+  if (loadingData) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-slate-900">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-amber-400"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex border-b-2">
@@ -147,7 +160,7 @@ function Page({ params }) {
           <span title="LogOut" className="bg-red-500 p-1 rounded-md text-white"><LogOut /></span>
           <span className="flex gap-2"><FolderDot /> ADMIN PAGE</span>
         </button>
-        {["ROOMS", "BOOKING", "PAYING", "CONTACT"].map((item) => (
+        {["ROOMS", "BOOKING", "CONTACT"].map((item) => (
           <span
             key={item}
             onClick={() => {
@@ -161,11 +174,11 @@ function Page({ params }) {
         ))}
       </div>
       <div style={{
-      backgroundImage: `url('/rooms/bg.jpg')`,
-      backgroundRepeat: 'no-repeat',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-    }} className="flex flex-col p-6 w-full justify-center items-center ">
+        backgroundImage: `url('/rooms/bg.jpg')`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }} className="flex flex-col p-6 w-full justify-center items-center ">
         <form ref={formRef} onSubmit={sendEmail} className="flex flex-col space-y-4 p-12 text-black backdrop-blur-sm rounded-md">
           <div className="text-center text-white text-3xl">Send Email To {(name).split(' ')[0]}</div>
           <input
