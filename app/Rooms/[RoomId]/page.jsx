@@ -15,10 +15,10 @@ function Page() {
   console.log(token);
   const params = useParams();
   const [isLoading, setIsLoading] = useState(true);
-  const star = <Image src="/star.png" alt="star" width={18} height={9} />
-  const bed = <Image src="/sleeping.png" alt="bed" width={18} height={9} />
-  const wifi = <Image src="/wifi.png" alt="wifi" width={18} height={9} />
-  const bath = <Image src="/bathtub.png" alt="bath" width={18} height={9} />
+  const star = <Image src="/star.png" alt="star" width={18} height={9} style={{ width: "auto", height: "auto" }} />
+  const bed = <Image src="/sleeping.png" alt="bed" width={18} height={9} style={{ width: "auto", height: "auto" }} />
+  const wifi = <Image src="/wifi.png" alt="wifi" width={18} height={9} style={{ width: "auto", height: "auto" }} />
+  const bath = <Image src="/bathtub.png" alt="bath" width={18} height={9} style={{ width: "auto", height: "auto" }} />
   const [room, setRoom] = useState({});
   const [checkInDate, setCheckInDate] = useState('');
   const [checkOutDate, setCheckOutDate] = useState('');
@@ -140,6 +140,7 @@ function Page() {
                       src={room.imageUrl}
                       alt={room.name || "Room"}
                       fill
+                      sizes="(max-width: 1024px) 100vw, 60vw"
                       className="object-cover transition-transform duration-700 group-hover:scale-110"
                     />
                   )}

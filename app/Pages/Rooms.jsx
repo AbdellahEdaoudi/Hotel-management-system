@@ -10,10 +10,10 @@ function Rooms() {
   const [filterType, setFilterType] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const star = <Image src="/star.png" alt="star" width={22} height={11} />;
-  const bed = <Image src="/sleeping.png" alt="bed" width={22} height={11} />;
-  const wifi = <Image src="/wifi.png" alt="wifi" width={22} height={11} />;
-  const bath = <Image src="/bathtub.png" alt="bath" width={22} height={11} />;
+  const star = <Image src="/star.png" alt="star" width={22} height={11} style={{ width: "auto", height: "auto" }} />;
+  const bed = <Image src="/sleeping.png" alt="bed" width={22} height={11} style={{ width: "auto", height: "auto" }} />;
+  const wifi = <Image src="/wifi.png" alt="wifi" width={22} height={11} style={{ width: "auto", height: "auto" }} />;
+  const bath = <Image src="/bathtub.png" alt="bath" width={22} height={11} style={{ width: "auto", height: "auto" }} />;
 
   useEffect(() => {
     setLoading(true);
@@ -50,7 +50,7 @@ function Rooms() {
           (filterType === "" ? rooms : rooms.filter((room) => room.type === filterType)).map((room, i) => (
             <div className="bg-white rounded-md shadow-md border pb-4" key={i} >
               <nav className="relative h-48">
-                <Image src={room.imageUrl} alt={room.name} fill className="object-cover rounded-t-md" />
+                <Image src={room.imageUrl} alt={room.name} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover rounded-t-md" />
                 <span className="absolute bottom-0 left-4 px-2 py-1 bg-amber-500 text-sm text-white rounded-md z-10">{room.prix}$/night</span>
               </nav>
               <div className="px-5">

@@ -87,6 +87,7 @@ function Page() {
               alt="Hotel Logo"
               height={80}
               width={80}
+              style={{ width: "auto", height: "auto" }}
             />
           </div>
 

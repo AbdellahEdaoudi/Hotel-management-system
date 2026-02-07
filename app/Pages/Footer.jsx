@@ -10,7 +10,7 @@ function Footer() {
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
             <div>
               <div className="text-teal-600 flex items-center space-x-3">
-                <Image src="/Images/logo.png" width={100} height={100} alt="EdHotel Logo" />
+                <Image src="/Images/logo.png" width={100} height={100} alt="EdHotel Logo" style={{ width: "auto", height: "auto" }} />
                 <span className="text-3xl">EdHotel</span>
               </div>
               <p className="mt-4 max-w-xs text-gray-500">

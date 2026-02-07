@@ -29,7 +29,7 @@ function About() {
           </p>
         </div>
         <div className="relative h-64 md:h-auto">
-          <Image src="/about-1.jpg" alt="EdHotel Facilities and Services" fill className="rounded-md object-cover" />
+          <Image src="/about-1.jpg" alt="EdHotel Facilities and Services" fill sizes="(max-width: 768px) 100vw, 50vw" className="rounded-md object-cover" />
         </div>
       </div>
     </div>
