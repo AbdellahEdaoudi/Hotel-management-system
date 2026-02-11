@@ -23,6 +23,7 @@
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
     "esbuild": "^0.25.11",
+    "framer-motion": "^12.34.0",
     "html2canvas": "^1.4.1",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
@@ -39,7 +40,6 @@
     "react-dom": "^18.3.1",
     "react-email": "^4.3.2",
     "react-notifications-component": "^4.0.1",
-    "react-toastify": "^10.0.5",
     "resend": "^3.2.0",
     "stripe": "13.2.0",
     "webpack": "^5.105.0"

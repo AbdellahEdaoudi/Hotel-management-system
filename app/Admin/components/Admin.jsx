@@ -1,19 +1,17 @@
 "use client"
 import { FolderDot, LogOut, Sun, Moon } from "../../Components/lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import ARooms from "./ARooms";
 import ABooking from "./ABooking";
 import AContact from "./AContact";
 import AddRoom from "./AddRoom";
 import AUsers from "./AUsers";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { useUser } from "../../context/UserContext";
+import { MyContext } from "../../context/Mycontext";
 
 function Admin() {
   const [Admin, setAdmin] = useState("ROOMS");
   const [theme, setTheme] = useState("dark"); // Default to dark for premium look
-  const {logout } = useUser();
+  const { logout } = useContext(MyContext);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("admin-theme");
@@ -75,8 +73,8 @@ function Admin() {
           <button
             onClick={toggleTheme}
             className={`w-full py-2 rounded-md flex items-center justify-center gap-2 font-medium transition-all ${theme === 'dark'
-                ? 'bg-slate-700 text-yellow-400 hover:bg-slate-600'
-                : 'bg-indigo-100 text-indigo-600 hover:bg-indigo-200'
+              ? 'bg-slate-700 text-yellow-400 hover:bg-slate-600'
+              : 'bg-indigo-100 text-indigo-600 hover:bg-indigo-200'
               }`}
           >
             {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -91,10 +89,10 @@ function Admin() {
               key={item.id}
               onClick={() => setAdmin(item.id)}
               className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-all duration-300 flex items-center gap-3 ${Admin === item.id
-                  ? "bg-orange-500 text-white shadow-lg transform scale-105"
-                  : theme === 'dark'
-                    ? "text-gray-400 hover:bg-gray-700 hover:text-white"
-                    : "text-gray-600 hover:bg-indigo-50 hover:text-indigo-600"
+                ? "bg-orange-500 text-white shadow-lg transform scale-105"
+                : theme === 'dark'
+                  ? "text-gray-400 hover:bg-gray-700 hover:text-white"
+                  : "text-gray-600 hover:bg-indigo-50 hover:text-indigo-600"
                 }`}
             >
               <span className="text-xl">{item.icon}</span>
@@ -114,7 +112,6 @@ function Admin() {
         {AdminPages()}
       </div>
 
-      <ToastContainer />
     </div>
   );
 }

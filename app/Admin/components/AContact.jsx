@@ -1,11 +1,11 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { format } from 'date-fns';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { MyContext } from '../../context/Mycontext';
 
 function AContact({ theme }) {
+  const { toast, logout } = useContext(MyContext);
   const [contacts, setContacts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -38,6 +38,16 @@ function AContact({ theme }) {
       setIsLoading(false);
     } catch (error) {
       console.error('Error fetching contacts:', error);
+      if (error.response) {
+        const status = error.response.status;
+        if (status === 401 || status === 403 || status === 404) {
+          let msg = "Session expired. Please login again.";
+          if (status === 404) msg = "User not found. Please login again.";
+          if (status === 401) msg = "Authentication required. Please login.";
+          if (toast) toast.error(msg);
+          router.push('/auth/Login');
+        }
+      }
       setIsLoading(false);
     }
   };
@@ -82,10 +92,21 @@ function AContact({ theme }) {
         setContacts(prev => prev.filter(c => c._id !== deleteModal.id));
       }
       closeDeleteModal();
-      toast.success("Message deleted successfully", { position: "top-center" });
+      toast.success("Message deleted successfully");
     } catch (error) {
       console.error('Error deleting contact:', error);
-      toast.error("Failed to delete message", { position: "top-center" });
+      if (error.response) {
+        const status = error.response.status;
+        if (status === 401 || status === 403 || status === 404) {
+          let msg = "Session expired. Please login again.";
+          if (status === 404) msg = "User not found. Please login again.";
+          if (status === 401) msg = "Authentication required. Please login.";
+          if (toast) toast.error(msg);
+          router.push('/auth/Login');
+          return;
+        }
+      }
+      toast.error("Failed to delete message");
     } finally {
       setIsDeleting(false);
     }
@@ -251,7 +272,6 @@ function AContact({ theme }) {
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
       `}</style>
-      <ToastContainer />
     </>
   );
 }

@@ -1,18 +1,15 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useRouter, useParams } from "next/navigation";
 import axios from "axios";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { MyContext } from "../../context/Mycontext";
 import { differenceInDays, parseISO } from "date-fns";
 import Image from "next/image";
-import { useUser } from "../../context/UserContext";
 import Header from "../../Pages/Header";
 
 function Page() {
   const router = useRouter();
-  const { user, logout, token } = useUser();
-  console.log(token);
+  const { user, logout, toast } = useContext(MyContext);
   const params = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const star = <Image src="/star.png" alt="star" width={18} height={9} style={{ width: "auto", height: "auto" }} />
@@ -47,44 +44,43 @@ function Page() {
     e.preventDefault();
 
     if (!user) {
-      toast.error("Please register/login to book a room", { position: "top-center" });
+      toast.error("Please register/login to book a room");
       setTimeout(() => router.push("/auth/Register"), 1500);
+      return;
+    }
+
+    if (!checkInDate || !checkOutDate) {
+      toast.error("Please select both check-in and check-out dates.");
+      return;
+    }
+
+    const checkIn = new Date(checkInDate);
+    const checkOut = new Date(checkOutDate);
+    const myDate = new Date();
+    myDate.setHours(0, 0, 0, 0);
+
+    if (checkIn < myDate || checkOut < myDate) {
+      toast.error("Please select dates in the future");
+      return;
+    }
+
+    if (checkOut < checkIn) {
+      toast.error("Your selected check-out date must be after the check-in date");
       return;
     }
 
     setIsBooking(true);
     const checkInDateObj = parseISO(checkInDate);
     const checkOutDateObj = parseISO(checkOutDate);
-    const daysDifference = differenceInDays(checkOutDateObj, checkInDateObj);
-    // Calculate total price: room price × number of nights
-    const prixTotal = daysDifference > 0 ? room.prix * daysDifference : 0;
+    const rawDays = differenceInDays(checkOutDateObj, checkInDateObj);
 
-    if (!checkInDate || !checkOutDate) {
-      toast.error("Please select both check-in and check-out dates.", { type: "error", position: "top-center", autoClose: 3000 });
-      setIsBooking(false);
-      return;
-    }
-
-    const myDate = new Date();
-    myDate.setHours(0, 0, 0, 0);
-    const checkIn = new Date(checkInDate);
-    const checkOut = new Date(checkOutDate);
-
-    if (checkIn < myDate || checkOut < myDate) {
-      toast.error("Please select dates in the future", { type: "error", position: "top-center", autoClose: 3000 });
-      setIsBooking(false);
-      return;
-    }
-
-    if (checkOut < checkIn) {
-      toast.error("Your selected check-out date must be after the check-in date", { type: "error", position: "top-center", autoClose: 3000 });
-      setIsBooking(false);
-      return;
-    }
+    // Calculate total price: room price × number of nights (at least 1 night if same day)
+    const effectiveDays = rawDays <= 0 ? 1 : rawDays;
+    const prixTotal = room.prix * effectiveDays;
 
     try {
       const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
-      const response = await axios.post(
+      const res = await axios.post(
         `${API_URL}/api/booking`,
         { user: user.id, room: room._id, prix: prixTotal, check_in: checkInDate, check_out: checkOutDate },
         {
@@ -94,16 +90,29 @@ function Page() {
           withCredentials: true
         }
       );
-      toast.success("Booking successful", { type: "success", position: "top-center", autoClose: 1000 });
+      console.log("Booking", res);
+
+      toast.success("Booking successful");
       setTimeout(() => {
         router.push("/Booking");
       }, 1000);
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        toast.error("Date is invalid", { type: "error", position: "top-center", autoClose: 3000 });
+      if (error.response) {
+        const status = error.response.status;
+        if (status === 401 || status === 403 || status === 404) {
+          let msg = "Session expired. Please login again.";
+          if (status === 404) msg = "User not found. Please login again.";
+          if (status === 401) msg = "Authentication required. Please login.";
+          toast.error(msg);
+          router.push('/auth/Login');
+        } else if (status === 400) {
+          toast.error("Date is invalid");
+        } else {
+          toast.error("An error occurred. Please try again.");
+        }
       } else {
         console.error(error);
-        toast.error("An error occurred. Please try again.", { type: "error", position: "top-center", autoClose: 3000 });
+        toast.error("An error occurred. Please try again.");
       }
     } finally {
       setIsBooking(false);
@@ -112,7 +121,8 @@ function Page() {
 
   const checkInDateObj = parseISO(checkInDate);
   const checkOutDateObj = parseISO(checkOutDate);
-  const daysDifference = differenceInDays(checkOutDateObj, checkInDateObj);
+  const rawDays = differenceInDays(checkOutDateObj, checkInDateObj);
+  const daysDifference = (checkInDate && checkOutDate) ? (rawDays <= 0 ? 1 : rawDays) : 0;
 
   if (isLoading) {
     return (
@@ -215,7 +225,7 @@ function Page() {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="col-span-2">
                       <label className="text-xs font-semibold text-gray-700 mb-1 flex items-center gap-1">
-                        Full Name
+                        Name
                       </label>
                       <input
                         type="text"
@@ -291,18 +301,6 @@ function Page() {
           </div>
         </div>
 
-        <ToastContainer
-          position="top-center"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
       </div>
     </div>
   );

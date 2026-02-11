@@ -1,9 +1,10 @@
 "use client";
-import { useUser } from "../context/UserContext";
+import React, { useContext } from "react";
+import { MyContext } from "../context/Mycontext";
 import Admin from "./components/Admin";
 
 function Page() {
-  const { user } = useUser();
+  const { user } = useContext(MyContext);
 
   if (!user || user.role !== "admin") {
     return (

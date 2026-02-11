@@ -1,17 +1,15 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { MyContext } from "../../context/Mycontext";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import LoadingButton from "../../Components/Loading/LoadingButton";
-import { useUser } from "../../context/UserContext";
 import Header from "../../Pages/Header";
 
 function Page() {
-  const { setUser } = useUser();
+  const { toast, setUser } = useContext(MyContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -21,10 +19,7 @@ function Page() {
   const handleLogin = async (e) => {
     e.preventDefault();
     if (!email || !password) {
-      toast.error("Email and password are required.", {
-        position: "top-center",
-        autoClose: 3000,
-      });
+      toast.error("Email and password are required.");
       return;
     }
     setIsLoading(true);
@@ -40,10 +35,7 @@ function Page() {
         // Update User Context Immediately
         setUser(response.data.user);
 
-        toast.success("User Login successfully.", {
-          position: "top-center",
-          autoClose: 3000,
-        });
+        toast.success("User Login successfully.");
         localStorage.setItem("user", JSON.stringify(response.data.user));
         router.push("/");
       } else {
@@ -53,18 +45,12 @@ function Page() {
           response.statusText
         );
         const errorMessage = response.data?.message || "Invalid credentials. Please try again.";
-        toast.error(errorMessage, {
-          position: "top-center",
-          autoClose: 3000,
-        });
+        toast.error(errorMessage);
       }
     } catch (error) {
       console.error("Error during login:", error);
       const errorMessage = error.response?.data?.message || "Invalid credentials. Please try again.";
-      toast.error(errorMessage, {
-        position: "top-center",
-        autoClose: 3000,
-      });
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -190,7 +176,6 @@ function Page() {
           </form>
         </div>
 
-        <ToastContainer />
       </div>
     </div>
   );

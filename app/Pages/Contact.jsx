@@ -1,14 +1,12 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useUser } from "../context/UserContext";
+import { MyContext } from "../context/Mycontext";
 
 function Contact() {
+    const { user, toast } = useContext(MyContext);
     const router = useRouter();
-    const { user } = useUser();
     const [subject, setSubject] = useState("");
     const [msg, setMsg] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -59,27 +57,18 @@ function Contact() {
                     withCredentials: true
                 });
                 setMessages([]);
-                toast.success("All messages deleted successfully!", {
-                    position: "top-center",
-                    autoClose: 2000,
-                });
+                toast.success("All messages deleted successfully!");
             } else {
                 await axios.delete(`${API_URL}/api/contact/user/${deleteModal.id}`, {
                     withCredentials: true
                 });
                 setMessages(prevMessages => prevMessages.filter(m => m._id !== deleteModal.id));
-                toast.success("Message deleted successfully!", {
-                    position: "top-center",
-                    autoClose: 2000,
-                });
+                toast.success("Message deleted successfully!");
             }
             closeDeleteModal();
         } catch (error) {
             console.error('Error deleting message:', error);
-            toast.error('Failed to delete message', {
-                position: "top-center",
-                autoClose: 2000,
-            });
+            toast.error('Failed to delete message');
         } finally {
             setIsDeleting(false);
         }
@@ -89,18 +78,12 @@ function Contact() {
         e.preventDefault();
 
         if (!subject || !msg) {
-            toast.error("Please fill in all fields", {
-                position: "top-center",
-                autoClose: 3000,
-            });
+            toast.error("Please fill in all fields");
             return;
         }
 
         if (!user?.id) {
-            toast.error("Please login to send a message", {
-                position: "top-center",
-                autoClose: 3000,
-            });
+            toast.error("Please login to send a message");
             setTimeout(() => router.push("/auth/Login"), 1500);
             return;
         }
@@ -117,20 +100,14 @@ function Contact() {
                     withCredentials: true
                 }
             );
-            toast.success("Message sent successfully!", {
-                position: "top-center",
-                autoClose: 2000,
-            });
+            toast.success("Message sent successfully!");
             setSubject("");
             setMsg("");
             // Add new message to the list
             setMessages(prev => [response.data, ...prev]);
         } catch (error) {
             console.error(error);
-            toast.error("An error occurred. Please try again.", {
-                position: "top-center",
-                autoClose: 2000,
-            });
+            toast.error("An error occurred. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -479,7 +456,6 @@ function Contact() {
         }
       `}</style>
 
-            <ToastContainer />
         </>
     );
 }

@@ -1,10 +1,10 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { MyContext } from '../../context/Mycontext';
 
 function AUsers({ theme }) {
+    const { toast, logout } = useContext(MyContext);
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,6 +37,17 @@ function AUsers({ theme }) {
             setIsLoading(false);
         } catch (error) {
             console.error('Error fetching users:', error);
+            if (error.response) {
+                const status = error.response.status;
+                if (status === 401 || status === 403 || status === 404) {
+                    let msg = "Session expired. Please login again.";
+                    if (status === 404) msg = "User not found. Please login again.";
+                    if (status === 401) msg = "Authentication required. Please login.";
+                    if (toast) toast.error(msg);
+                    router.push('/auth/Login');
+
+                }
+            }
             setIsLoading(false);
         }
     };
@@ -63,7 +74,7 @@ function AUsers({ theme }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!name || !email || (!isEdit && !password)) {
-            toast.error("Please fill all required fields", { position: "top-center" });
+            toast.error("Please fill all required fields");
             return;
         }
 
@@ -77,18 +88,29 @@ function AUsers({ theme }) {
                 await axios.put(`${API_URL}/api/admin/users/${currentUser._id}`, userData, {
                     withCredentials: true
                 });
-                toast.success("User updated successfully", { position: "top-center" });
+                toast.success("User updated successfully");
             } else {
                 await axios.post(`${API_URL}/api/admin/users`, userData, {
                     withCredentials: true
                 });
-                toast.success("User created successfully", { position: "top-center" });
+                toast.success("User created successfully");
             }
             setShowModal(false);
             fetchUsers();
         } catch (error) {
             console.error("Error saving user:", error);
-            toast.error(error.response?.data?.message || "Failed to save user", { position: "top-center" });
+            if (error.response) {
+                const status = error.response.status;
+                if (status === 401 || status === 403 || status === 404) {
+                    let msg = "Session expired. Please login again.";
+                    if (status === 404) msg = "User not found. Please login again.";
+                    if (status === 401) msg = "Authentication required. Please login.";
+                    if (toast) toast.error(msg);
+                    router.push('/auth/Login');
+                    return;
+                }
+            }
+            toast.error(error.response?.data?.message || "Failed to save user");
         } finally {
             setIsSubmitting(false);
         }
@@ -101,12 +123,23 @@ function AUsers({ theme }) {
             await axios.delete(`${API_URL}/api/admin/users/${deleteModal.id}`, {
                 withCredentials: true
             });
-            toast.success("User deleted successfully", { position: "top-center" });
+            toast.success("User deleted successfully");
             setDeleteModal({ show: false, id: null });
             fetchUsers();
         } catch (error) {
             console.error("Error deleting user:", error);
-            toast.error("Failed to delete user", { position: "top-center" });
+            if (error.response) {
+                const status = error.response.status;
+                if (status === 401 || status === 403 || status === 404) {
+                    let msg = "Session expired. Please login again.";
+                    if (status === 404) msg = "User not found. Please login again.";
+                    if (status === 401) msg = "Authentication required. Please login.";
+                    if (toast) toast.error(msg);
+                    router.push('/auth/Login');
+                    return;
+                }
+            }
+            toast.error("Failed to delete user");
         } finally {
             setIsDeleting(false);
         }
@@ -326,7 +359,6 @@ function AUsers({ theme }) {
                 </div>
             )}
 
-            <ToastContainer position="top-center" theme={isDark ? "dark" : "light"} />
             <style jsx>{`
         .animate-fadeIn { animation: fadeIn 0.4s ease-out; }
         .animate-scaleIn { animation: scaleIn 0.3s ease-out; }

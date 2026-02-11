@@ -1,13 +1,13 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Link from "next/link";
 import { LogOut, Menu, X, User } from "../Components/lucide-react";
 import Image from "next/image";
-import { useUser } from "../context/UserContext";
+import { MyContext } from "../context/Mycontext";
 
 function Header({ page }) {
   const [menu, setMenu] = useState(false);
-  const { user, logout } = useUser();
+  const { user, logout, isLoggingOut } = useContext(MyContext);
 
   return (
     <header className="py-1 bg-slate-900 text-yellow-100 shadow-lg border-b border-yellow-100/20 sticky top-0 z-50 backdrop-blur-md">
@@ -73,10 +73,15 @@ function Header({ page }) {
                 </div>
                 <button
                   title="LogOut"
-                  className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded-full transition-all duration-300"
+                  className={`p-2 rounded-full transition-all duration-300 ${isLoggingOut ? "text-gray-500 cursor-not-allowed" : "text-gray-400 hover:text-red-400 hover:bg-red-400/10"}`}
                   onClick={logout}
+                  disabled={isLoggingOut}
                 >
-                  <LogOut size={18} />
+                  {isLoggingOut ? (
+                    <div className="w-5 h-5 border-2 border-red-400 border-t-transparent animate-spin rounded-full"></div>
+                  ) : (
+                    <LogOut size={18} />
+                  )}
                 </button>
               </div>
             )}
@@ -173,10 +178,15 @@ function Header({ page }) {
                   logout();
                   setMenu(false);
                 }}
-                className="w-full py-3 flex items-center justify-center gap-2 text-red-400 border border-red-400/30 rounded-xl hover:bg-red-400/10 transition-colors"
+                disabled={isLoggingOut}
+                className={`w-full py-3 flex items-center justify-center gap-2 rounded-xl border transition-colors ${isLoggingOut ? "text-gray-500 border-gray-700 cursor-not-allowed" : "text-red-400 border-red-400/30 hover:bg-red-400/10"}`}
               >
-                <LogOut size={18} />
-                Logout
+                {isLoggingOut ? (
+                  <div className="w-5 h-5 border-2 border-red-400 border-t-transparent animate-spin rounded-full"></div>
+                ) : (
+                  <LogOut size={18} />
+                )}
+                {isLoggingOut ? "Logging out..." : "Logout"}
               </button>
             </div>
           )}

@@ -1,17 +1,15 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { MyContext } from "../../context/Mycontext";
 import LoadingButton from "../../Components/Loading/LoadingButton";
-import { useUser } from "../../context/UserContext";
 import Header from "../../Pages/Header";
 
 function Page() {
-  const { setUser } = useUser();
+  const { toast, setUser } = useContext(MyContext);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,11 +21,7 @@ function Page() {
     e.preventDefault();
 
     if (!name || !email || !password) {
-      toast("All fields are necessary.", {
-        type: "error",
-        position: "top-center",
-        autoClose: 3000,
-      });
+      toast.error("All fields are necessary.");
       return;
     }
 
@@ -45,11 +39,7 @@ function Page() {
       if (response.status === 200) {
         const data = response.data;
         console.log("User registered successfully:", data);
-        toast("User registered successfully!", {
-          type: "success",
-          position: "top-center",
-          autoClose: 2000,
-        });
+        toast.success("User registered successfully!");
         setTimeout(() => {
           router.push("/auth/Login");
         }, 2000);
@@ -57,11 +47,7 @@ function Page() {
     } catch (error) {
       console.error("Error during registration:", error);
       const errorMessage = error.response?.data?.message || "Registration failed. Please try again.";
-      toast(errorMessage, {
-        type: "error",
-        position: "top-center",
-        autoClose: 3000,
-      });
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -197,7 +183,6 @@ function Page() {
             </div>
           </form>
         </div>
-        <ToastContainer />
       </div>
     </div>
   );

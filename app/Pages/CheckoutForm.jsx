@@ -4,27 +4,83 @@ import axios from 'axios';
 import { differenceInDays, format, parseISO } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useUser } from '../context/UserContext';
+import { useState, useEffect, useContext } from 'react';
+import { MyContext } from '../context/Mycontext';
 
 import { useSearchParams } from 'next/navigation';
 
 const CheckoutForm = ({ amount }) => {
+  const { toast, user, logout } = useContext(MyContext);
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
+  const [isPaymentElementLoaded, setIsPaymentElementLoaded] = useState(false);
   const [bookings, setBookings] = useState([]);
+  const [isLoadingBookings, setIsLoadingBookings] = useState(true);
+
+  const PaymentSkeleton = () => (
+    <div className="space-y-4 animate-pulse">
+      <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
+      <div className="h-10 bg-gray-100 rounded border border-gray-200 mb-4"></div>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+          <div className="h-10 bg-gray-100 rounded border border-gray-200"></div>
+        </div>
+        <div>
+          <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+          <div className="h-10 bg-gray-100 rounded border border-gray-200"></div>
+        </div>
+      </div>
+      <div className="h-4 bg-gray-200 rounded w-1/3 mt-4"></div>
+      <div className="h-10 bg-gray-100 rounded border border-gray-200 mt-2"></div>
+    </div>
+  );
+
+  const BookingSummarySkeleton = () => (
+    <div className="space-y-4 animate-pulse">
+      {[1, 2].map((i) => (
+        <div key={i} className="pb-3 border-b border-gray-200 last:border-0">
+          <div className="flex justify-between mb-2">
+            <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+            <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+          </div>
+          <div className="h-3 bg-gray-100 rounded w-1/3 mb-1"></div>
+          <div className="h-3 bg-gray-100 rounded w-1/2"></div>
+        </div>
+      ))}
+    </div>
+  );
+
+  const BookingCardSkeleton = () => (
+    <div className="space-y-4">
+      {[1, 2].map((i) => (
+        <div key={i} className="bg-white/95 rounded-lg shadow-md p-6 border border-orange-100 animate-pulse">
+          <div className="flex justify-between items-start mb-4">
+            <div className="space-y-2 w-full">
+              <div className="h-5 bg-gray-200 rounded w-1/3"></div>
+              <div className="h-4 bg-gray-100 rounded w-1/4"></div>
+            </div>
+            <div className="h-6 bg-orange-100 rounded w-16"></div>
+          </div>
+          <div className="grid md:grid-cols-2 gap-3 mb-4">
+            <div className="h-12 bg-gray-50 rounded-lg"></div>
+            <div className="h-12 bg-gray-50 rounded-lg"></div>
+          </div>
+          <div className="h-4 bg-gray-50 rounded w-1/4"></div>
+        </div>
+      ))}
+    </div>
+  );
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user } = useUser();
 
   const bookingId = searchParams.get('bookingId');
   const type = searchParams.get('type');
 
   useEffect(() => {
     const fetchBookings = async () => {
+      setIsLoadingBookings(true);
       try {
         const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://edhotelserver.vercel.app";
         const res = await axios.get(`${API_URL}/api/booking`, {
@@ -33,14 +89,23 @@ const CheckoutForm = ({ amount }) => {
         setBookings(res.data);
       } catch (error) {
         console.error('Error fetching bookings:', error);
-        if (error.response?.status === 401) {
-          router.push('/auth/Login');
+        if (error.response) {
+          const status = error.response.status;
+          if (status === 401 || status === 403 || status === 404) {
+            let msg = "Session expired. Please login again.";
+            if (status === 404) msg = "User not found. Please login again.";
+            if (status === 401) msg = "Authentication required. Please login.";
+            if (toast) toast.error(msg);
+            router.push('/auth/Login');
+          }
         }
+      } finally {
+        setIsLoadingBookings(false);
       }
     };
 
     fetchBookings();
-  }, [router]);
+  }, []);
 
   const getFilteredBookings = () => {
     if (bookingId) {
@@ -58,10 +123,7 @@ const CheckoutForm = ({ amount }) => {
     event.preventDefault();
 
     if (!stripe || !elements) {
-      toast.error('Stripe is not loaded yet. Please wait.', {
-        position: 'top-center',
-        autoClose: 3000,
-      });
+      toast.error('Stripe is not loaded yet. Please wait.');
       return;
     }
 
@@ -115,10 +177,7 @@ const CheckoutForm = ({ amount }) => {
       });
 
       if (result.error) {
-        toast.error(result.error.message, {
-          position: 'top-center',
-          autoClose: 5000,
-        });
+        toast.error(result.error.message);
         setLoading(false);
       } else if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
         // Payment successful - Update booking status
@@ -142,18 +201,24 @@ const CheckoutForm = ({ amount }) => {
           router.push(`/payment-confirm?payment_intent=${result.paymentIntent.id}&bookingId=${bookingId || ''}`);
         } catch (updateError) {
           console.error("Error updating booking status:", updateError);
-          toast.error("Payment successful but failed to update booking status. Please contact support.", {
-            position: 'top-center'
-          });
+          if (updateError.response) {
+            const status = updateError.response.status;
+            if (status === 401 || status === 403 || status === 404) {
+              let msg = "Session expired. Please login again.";
+              if (status === 404) msg = "User not found. Please login again.";
+              if (status === 401) msg = "Authentication required. Please login.";
+              if (toast) toast.error(msg);
+              router.push('/auth/Login');
+              return;
+            }
+          }
+          toast.error("Payment successful but failed to update booking status. Please contact support.");
           setLoading(false);
         }
       }
     } catch (error) {
       console.error('Error processing payment:', error);
-      toast.error(error.message || 'Payment failed. Please try again.', {
-        position: 'top-center',
-        autoClose: 5000,
-      });
+      toast.error(error.message || 'Payment failed. Please try again.');
       setLoading(false);
     }
   };
@@ -178,21 +243,25 @@ const CheckoutForm = ({ amount }) => {
               </h2>
 
               <div className="space-y-3 mb-6">
-                {displayBookings.map((booking, index) => {
-                  const nights = calculateNights(booking.check_in, booking.check_out);
-                  return (
-                    <div key={booking._id || index} className="pb-3 border-b border-gray-200 last:border-0">
-                      <div className="flex justify-between items-start mb-1">
-                        <span className="font-semibold text-gray-800">{booking.room?.name || 'Room'}</span>
-                        <span className="font-bold text-orange-600">${booking.prix}</span>
+                {isLoadingBookings ? (
+                  <BookingSummarySkeleton />
+                ) : (
+                  displayBookings.map((booking, index) => {
+                    const nights = calculateNights(booking.check_in, booking.check_out);
+                    return (
+                      <div key={booking._id || index} className="pb-3 border-b border-gray-200 last:border-0">
+                        <div className="flex justify-between items-start mb-1">
+                          <span className="font-semibold text-gray-800">{booking.room?.name || 'Room'}</span>
+                          <span className="font-bold text-orange-600">${booking.prix}</span>
+                        </div>
+                        <p className="text-xs text-gray-500">{nights} {nights === 1 ? 'night' : 'nights'}</p>
+                        <p className="text-xs text-gray-500">
+                          {format(parseISO(booking.check_in), "MMM dd")} - {format(parseISO(booking.check_out), "MMM dd, yyyy")}
+                        </p>
                       </div>
-                      <p className="text-xs text-gray-500">{nights} {nights === 1 ? 'night' : 'nights'}</p>
-                      <p className="text-xs text-gray-500">
-                        {format(parseISO(booking.check_in), "MMM dd")} - {format(parseISO(booking.check_out), "MMM dd, yyyy")}
-                      </p>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
               </div>
 
               <div className="border-t-2 border-orange-200 pt-4">
@@ -236,13 +305,16 @@ const CheckoutForm = ({ amount }) => {
                   Payment Details
                 </h2>
 
-                <div className="mb-6">
-                  <PaymentElement />
+                <div className="mb-6 min-h-[250px] relative">
+                  {!isPaymentElementLoaded && <PaymentSkeleton />}
+                  <div className={!isPaymentElementLoaded ? 'hidden' : 'block'}>
+                    <PaymentElement onReady={() => setIsPaymentElementLoaded(true)} />
+                  </div>
                 </div>
 
                 <button
                   type="submit"
-                  disabled={!stripe || loading}
+                  disabled={!stripe || loading || !isPaymentElementLoaded}
                   className="w-full py-4 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold text-lg rounded-lg shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3"
                 >
                   {loading ? (
@@ -255,7 +327,7 @@ const CheckoutForm = ({ amount }) => {
                       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                       </svg>
-                      Pay ${amount}
+                      {isPaymentElementLoaded ? `Pay $${amount}` : 'Loading...'}
                     </>
                   )}
                 </button>
@@ -266,54 +338,57 @@ const CheckoutForm = ({ amount }) => {
               </div>
 
               {/* Booking Details Cards */}
-              {displayBookings.length > 0 && (
+              {(isLoadingBookings || displayBookings.length > 0) && (
                 <div className="space-y-4">
                   <h3 className="text-lg font-bold text-gray-800 mb-4">Your Bookings</h3>
-                  {displayBookings.map((booking, index) => {
-                    const nights = calculateNights(booking.check_in, booking.check_out);
-                    const checkInFormatted = format(parseISO(booking.check_in), "MMMM do, yyyy", { locale: enUS });
-                    const checkOutFormatted = format(parseISO(booking.check_out), "MMMM do, yyyy", { locale: enUS });
+                  {isLoadingBookings ? (
+                    <BookingCardSkeleton />
+                  ) : (
+                    displayBookings.map((booking, index) => {
+                      const nights = calculateNights(booking.check_in, booking.check_out);
+                      const checkInFormatted = format(parseISO(booking.check_in), "MMMM do, yyyy", { locale: enUS });
+                      const checkOutFormatted = format(parseISO(booking.check_out), "MMMM do, yyyy", { locale: enUS });
 
-                    return (
-                      <div
-                        key={booking._id || index}
-                        className="bg-white/95 backdrop-blur-md rounded-lg shadow-md p-6 border border-orange-100"
-                      >
-                        <div className="flex justify-between items-start mb-3">
-                          <div>
-                            <h4 className="text-lg font-bold text-gray-800">{booking.room?.name || 'Room'}</h4>
-                            <p className="text-sm text-gray-500">{booking.room?.type || 'Standard Room'}</p>
+                      return (
+                        <div
+                          key={booking._id || index}
+                          className="bg-white/95 backdrop-blur-md rounded-lg shadow-md p-6 border border-orange-100"
+                        >
+                          <div className="flex justify-between items-start mb-3">
+                            <div>
+                              <h4 className="text-lg font-bold text-gray-800">{booking.room?.name || 'Room'}</h4>
+                              <p className="text-sm text-gray-500">{booking.room?.type || 'Standard Room'}</p>
+                            </div>
+                            <span className="text-xl font-bold text-orange-600">${booking.prix}</span>
                           </div>
-                          <span className="text-xl font-bold text-orange-600">${booking.prix}</span>
-                        </div>
 
-                        <div className="grid md:grid-cols-2 gap-3">
-                          <div className="bg-orange-50 p-3 rounded-lg">
-                            <p className="text-xs text-gray-600 mb-1">Check-in</p>
-                            <p className="font-semibold text-gray-800">{checkInFormatted}</p>
+                          <div className="grid md:grid-cols-2 gap-3">
+                            <div className="bg-orange-50 p-3 rounded-lg">
+                              <p className="text-xs text-gray-600 mb-1">Check-in</p>
+                              <p className="font-semibold text-gray-800">{checkInFormatted}</p>
+                            </div>
+                            <div className="bg-orange-50 p-3 rounded-lg">
+                              <p className="text-xs text-gray-600 mb-1">Check-out</p>
+                              <p className="font-semibold text-gray-800">{checkOutFormatted}</p>
+                            </div>
                           </div>
-                          <div className="bg-orange-50 p-3 rounded-lg">
-                            <p className="text-xs text-gray-600 mb-1">Check-out</p>
-                            <p className="font-semibold text-gray-800">{checkOutFormatted}</p>
-                          </div>
-                        </div>
 
-                        <div className="mt-3 flex items-center gap-2 text-sm text-gray-600">
-                          <svg className="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                          </svg>
-                          <span>{nights} {nights === 1 ? 'Night' : 'Nights'}</span>
+                          <div className="mt-3 flex items-center gap-2 text-sm text-gray-600">
+                            <svg className="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                            </svg>
+                            <span>{nights} {nights === 1 ? 'Night' : 'Nights'}</span>
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })
+                  )}
                 </div>
               )}
             </form>
           </div>
         </div>
       </div>
-      <ToastContainer />
     </div>
   );
 };

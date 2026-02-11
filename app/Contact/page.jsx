@@ -1,5 +1,4 @@
 import Test from "../Pages/Test"
-import 'react-toastify/dist/ReactToastify.css';
 import Contact from "../Pages/Contact";
 import Header from "../Pages/Header";
 
@@ -15,10 +14,10 @@ function Page() {
         <Header page={"Contact"} />
       </div>
       <div className=" bg-gray-50 ">
-      <Test name="CONTACT" />
-      {/* CONTACT */}
-      <Contact />
-    </div>
+        <Test name="CONTACT" />
+        {/* CONTACT */}
+        <Contact />
+      </div>
     </div>
   );
 }

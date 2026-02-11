@@ -1,11 +1,11 @@
 "use client";
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useContext } from 'react';
 import axios from 'axios';
 import NextImage from 'next/image';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { MyContext } from '../../context/Mycontext';
 
 function AddRoom({ setAdmin, theme }) {
+  const { toast, logout } = useContext(MyContext);
   const formRef = useRef(null);
   const [imageRoom, setImageRoom] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -31,20 +31,25 @@ function AddRoom({ setAdmin, theme }) {
       const response = await axios.post(`${API_URL}/api/admin/rooms`, formData, {
         withCredentials: true
       });
-      toast.success("Room added successfully!", {
-        position: "top-center",
-        autoClose: 2000,
-      });
+      toast.success("Room added successfully!");
       formRef.current.reset();
       setImageRoom(null);
       // Redirect back to rooms after 1 second
       setTimeout(() => setAdmin('ROOMS'), 1000);
     } catch (error) {
       console.error('Error uploading room:', error);
-      toast.error('Failed to add room. Please try again.', {
-        position: "top-center",
-        autoClose: 3000,
-      });
+      if (error.response) {
+        const status = error.response.status;
+        if (status === 401 || status === 403 || status === 404) {
+          let msg = "Session expired. Please login again.";
+          if (status === 404) msg = "User not found. Please login again.";
+          if (status === 401) msg = "Authentication required. Please login.";
+          if (toast) toast.error(msg);
+          router.push('/auth/Login');
+          return;
+        }
+      }
+      toast.error('Failed to add room. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -221,7 +226,6 @@ function AddRoom({ setAdmin, theme }) {
           </div>
         </div>
       </div>
-      <ToastContainer position="top-center" theme={isDark ? "dark" : "light"} />
     </>
   );
 }

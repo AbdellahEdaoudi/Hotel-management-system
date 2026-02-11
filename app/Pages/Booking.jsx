@@ -1,19 +1,19 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { differenceInDays, format, parseISO } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import Link from "next/link";
 import Image from "next/image";
-import { useUser } from "../context/UserContext";
+import { MyContext } from "../context/Mycontext";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
 export function Booking() {
   const router = useRouter();
   const [bookings, setBookings] = useState([]);
-  const { user } = useUser();
+  const { user, setUser, logout, toast } = useContext(MyContext);
   const [isLoading, setIsLoading] = useState(true);
   const [deleteModal, setDeleteModal] = useState({ show: false, id: null, type: null });
   const [viewModal, setViewModal] = useState({ show: false, booking: null });
@@ -31,8 +31,16 @@ export function Booking() {
         setBookings(response.data);
       } catch (error) {
         console.error("Error fetching bookings:", error);
-        if (error.response?.status === 401) {
-          router.push("/auth/Login");
+        if (error.response) {
+          const status = error.response.status;
+          if (status === 401 || status === 403 || status === 404) {
+            let msg = "Session expired. Please login again.";
+            if (status === 404) msg = "User not found. Please login again.";
+            if (status === 401) msg = "Authentication required. Please login.";
+            if (toast) toast.error(msg);
+            router.push('/auth/Login');
+            setUser(null);
+          }
         }
       } finally {
         setIsLoading(false);
@@ -40,7 +48,7 @@ export function Booking() {
     };
 
     fetchBookings();
-  }, [router]);
+  }, []);
 
   const openDeleteModal = (id, type) => {
     setDeleteModal({ show: true, id, type });
@@ -70,6 +78,17 @@ export function Booking() {
       closeDeleteModal();
     } catch (error) {
       console.error('Error deleting booking:', error);
+      if (error.response) {
+        const status = error.response.status;
+        if (status === 401 || status === 403 || status === 404) {
+          let msg = "Session expired. Please login again.";
+          if (status === 404) msg = "User not found. Please login again.";
+          if (status === 401) msg = "Authentication required. Please login.";
+          if (toast) toast.error(msg);
+          router.push('/auth/Login');
+          return;
+        }
+      }
       alert('Failed to delete booking');
     } finally {
       setIsDeleting(false);

@@ -3,7 +3,8 @@ import './globals.css';
 import Header from './Pages/Header';
 import Footer from './Pages/Footer';
 import 'animate.css';
-import { UserProvider } from './context/UserContext';
+import { MyProvider } from './context/Mycontext';
+import { ToastProvider } from './Components/toast';
 
 const inter = Inter({ subsets: ['latin'] });
 const prompt = Prompt({ subsets: ['latin'], weight: '400' });
@@ -101,7 +102,8 @@ export default function RootLayout({ children }) {
         <meta name="google-site-verification" content="your-verification-code" />
       </head>
       <body className={`${prompt.className}`}>
-        <UserProvider>
+        <ToastProvider>
+        <MyProvider>
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{
@@ -138,9 +140,10 @@ export default function RootLayout({ children }) {
               })
             }}
           />
-          
+
           {children}
-        </UserProvider>
+        </MyProvider>
+        </ToastProvider>
       </body>
     </html>
   );

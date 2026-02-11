@@ -1,11 +1,11 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { format } from 'date-fns';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { MyContext } from '../../context/Mycontext';
 
 function ABooking({ theme }) {
+  const { toast, logout } = useContext(MyContext);
   const [bookings, setBookings] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -39,6 +39,16 @@ function ABooking({ theme }) {
       setIsLoading(false);
     } catch (error) {
       console.error('Error fetching bookings:', error);
+      if (error.response) {
+        const status = error.response.status;
+        if (status === 401 || status === 403 || status === 404) {
+          let msg = "Session expired. Please login again.";
+          if (status === 404) msg = "User not found. Please login again.";
+          if (status === 401) msg = "Authentication required. Please login.";
+          if (toast) toast.error(msg);
+          router.push('/auth/Login');
+        }
+      }
       setIsLoading(false);
     }
   };
@@ -80,12 +90,21 @@ function ABooking({ theme }) {
         setBookings(prev => prev.filter(b => b._id !== deleteModal.id));
       }
       closeDeleteModal();
-      toast.success(deleteModal.type === 'all' ? "All bookings cancelled successfully" : "Booking cancelled successfully", {
-        position: "top-center"
-      });
+      toast.success(deleteModal.type === 'all' ? "All bookings cancelled successfully" : "Booking cancelled successfully");
     } catch (error) {
       console.error('Error deleting booking:', error);
-      toast.error("Failed to cancel booking", { position: "top-center" });
+      if (error.response) {
+        const status = error.response.status;
+        if (status === 401 || status === 403 || status === 404) {
+          let msg = "Session expired. Please login again.";
+          if (status === 404) msg = "User not found. Please login again.";
+          if (status === 401) msg = "Authentication required. Please login.";
+          if (toast) toast.error(msg);
+          router.push('/auth/Login');
+          return;
+        }
+      }
+      toast.error("Failed to cancel booking");
     } finally {
       setIsDeleting(false);
     }
@@ -256,7 +275,6 @@ function ABooking({ theme }) {
           </div>
         </div>
       )}
-      <ToastContainer />
       <style jsx>{`
         .animate-fadeIn { animation: fadeIn 0.4s ease-out; }
         .animate-scaleIn { animation: scaleIn 0.3s ease-out; }

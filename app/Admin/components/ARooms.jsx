@@ -1,12 +1,12 @@
 "use client";
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import axios from 'axios';
 import NextImage from 'next/image';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { MyContext } from '../../context/Mycontext';
 import CardSkeleton from '../../Components/Loading/CardSkeleton';
 
 function ARooms({ setAdmin, theme }) {
+  const { toast, logout } = useContext(MyContext);
   const [dataH, setdataH] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [deletingId, setDeletingId] = useState(null);
@@ -25,6 +25,16 @@ function ARooms({ setAdmin, theme }) {
         setdataH(res.data);
       } catch (error) {
         console.error('Error fetching rooms:', error);
+        if (error.response) {
+          const status = error.response.status;
+          if (status === 401 || status === 403 || status === 404) {
+            let msg = "Session expired. Please login again.";
+            if (status === 404) msg = "User not found. Please login again.";
+            if (status === 401) msg = "Authentication required. Please login.";
+            if (toast) toast.error(msg);
+            router.push('/auth/Login');
+          }
+        }
       } finally {
         setIsLoading(false);
       }
@@ -48,16 +58,22 @@ function ARooms({ setAdmin, theme }) {
         withCredentials: true
       });
       setdataH(prevRooms => prevRooms.filter(room => room._id !== deleteModal.id));
-      toast.success("Room deleted successfully", {
-        position: "top-center",
-        autoClose: 3000
-      });
+      toast.success("Room deleted successfully");
       closeDeleteModal();
     } catch (error) {
       console.error('Error deleting room:', error);
-      toast.error("Failed to delete room: " + (error.response?.data?.message || error.message), {
-        position: "top-center"
-      });
+      if (error.response) {
+        const status = error.response.status;
+        if (status === 401 || status === 403 || status === 404) {
+          let msg = "Session expired. Please login again.";
+          if (status === 404) msg = "User not found. Please login again.";
+          if (status === 401) msg = "Authentication required. Please login.";
+          if (toast) toast.error(msg);
+          router.push('/auth/Login');
+          return;
+        }
+      }
+      toast.error("Failed to delete room: " + (error.response?.data?.message || error.message));
     } finally {
       setDeletingId(null);
     }
@@ -98,16 +114,22 @@ function ARooms({ setAdmin, theme }) {
       const res = await axios.get(`${API_URL}/api/rooms`);
       setdataH(res.data);
 
-      toast.success("Room updated successfully!", {
-        position: "top-center",
-        autoClose: 3000
-      });
+      toast.success("Room updated successfully!");
       closeEditModal();
     } catch (error) {
       console.error('Error updating room:', error);
-      toast.error("Failed to update room: " + (error.response?.data?.message || error.message), {
-        position: "top-center"
-      });
+      if (error.response) {
+        const status = error.response.status;
+        if (status === 401 || status === 403 || status === 404) {
+          let msg = "Session expired. Please login again.";
+          if (status === 404) msg = "User not found. Please login again.";
+          if (status === 401) msg = "Authentication required. Please login.";
+          if (toast) toast.error(msg);
+          router.push('/auth/Login');
+          return;
+        }
+      }
+      toast.error("Failed to update room: " + (error.response?.data?.message || error.message));
     } finally {
       setIsUpdating(false);
     }
@@ -349,7 +371,6 @@ function ARooms({ setAdmin, theme }) {
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
       `}</style>
-      <ToastContainer />
     </>
   );
 }
