@@ -3,14 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"next dev --webpack\"",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@babel/runtime": "^7.28.4",
-    "@react-email/components": "^0.5.7",
     "@stripe/react-stripe-js": "^2.7.1",
     "@stripe/stripe-js": "^3.4.0",
     "axios": "^1.13.0",
@@ -20,12 +19,8 @@
     "js-cookie": "^3.0.5",
     "jspdf": "^4.1.0",
     "next": "^16.1.6",
-    "next-auth": "^4.24.13",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-email": "^4.3.2",
-    "react-notifications-component": "^4.0.1",
-    "resend": "^3.2.0",
     "stripe": "13.2.0"
   },
   "devDependencies": {
