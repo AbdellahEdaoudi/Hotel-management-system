@@ -2,10 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
-body{
- background-color: white;
+@layer base {
+  :root {
+    --brand-primary: #f59e0b;
+    --brand-secondary: #0f172a;
+    --brand-accent: #fbbf24;
+    --brand-text: #1e293b;
+    --brand-text-muted: #64748b;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.2);
+  }
+
+  body {
+    @apply antialiased text-brand-text bg-slate-50;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
 }
 
-.rounded-md {
-    border-radius: 0.375rem;
+@layer components {
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl;
   }
+  
+  .premium-gradient {
+    @apply bg-gradient-to-br from-amber-400 via-amber-500 to-orange-600;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent;
+  }
+
+  .hover-lift {
+    @apply transition-transform duration-300 hover:-translate-y-2 hover:shadow-2xl;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}

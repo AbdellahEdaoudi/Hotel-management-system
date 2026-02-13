@@ -1,8 +1,5 @@
 import { Inter, Prompt } from 'next/font/google';
 import './globals.css';
-import Header from './Pages/Header';
-import Footer from './Pages/Footer';
-import 'animate.css';
 import { MyProvider } from './context/Mycontext';
 import { ToastProvider } from './Components/toast';
 
@@ -20,19 +17,14 @@ export const metadata = {
   authors: [{ name: 'Abdellah Edaoudi', url: 'https://abdellah-edaoudi.vercel.app' }],
   generator: 'Next.js',
   keywords: [
-    'EdHotel', 'hotel management', 'hospitality software', 'guest management', 'booking system',
-    'streamline operations', 'guest experience', 'optimize hotel', 'hotel software', 'hotel booking',
-    'hotel operations', 'hotel technology', 'property management system', 'PMS', 'hotel CRM',
-    'hotel reservations', 'hotel marketing', 'hotel automation', 'hotel revenue management',
-    'hotel guest satisfaction', 'hotel staff management', 'hotel analytics', 'hotel reporting',
-    'hotel administration', 'hotel technology solutions', 'hotel front desk software',
-    'online booking system', 'hotel digital marketing', 'hotel maintenance management',
-    'hotel room management', 'hotel housekeeping management', 'hotel inventory management',
-    'hotel pricing strategy', 'hotel loyalty program', 'hotel customer service', 'hotel check-in',
-    'hotel check-out', 'hotel property management', 'hotel room rates', 'hotel occupancy management',
-    'hotel distribution strategy', 'hotel channel management', 'hotel API integration',
-    'hotel cloud software', 'hotel mobile app', 'hotel operations software', 'hotel business intelligence',
-    'hotel POS system', 'hotel workflow automation', 'hotel guest feedback'
+    'EdHotel',
+    'Hotel Management System',
+    'PMS',
+    'Hospitality Software',
+    'Online Booking',
+    'Guest Experience',
+    'Hotel Operations',
+    'Property Management'
   ],
   referrer: 'origin-when-cross-origin',
   creator: 'Abdellah Edaoudi',
@@ -103,46 +95,46 @@ export default function RootLayout({ children }) {
       </head>
       <body className={`${prompt.className}`}>
         <ToastProvider>
-        <MyProvider>
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "Hotel",
-                "name": "EdHotel",
-                "description": "Premium Hotel Management System",
-                "url": "https://edhotel.vercel.app",
-                "logo": "https://edhotel.vercel.app/Images/logo.png",
-                "image": "https://res.cloudinary.com/dynprvsfg/image/upload/v1717421518/wprm2rcy3qvhn1jvc1wk.png",
-                "telephone": "+212607071966",
-                "email": "abdellahedaoudi80@gmail.com",
-                "address": {
-                  "@type": "PostalAddress",
-                  "streetAddress": "Hay Lwahda 1",
-                  "addressLocality": "Laayoune",
-                  "addressRegion": "Laayoune",
-                  "postalCode": "70000",
-                  "addressCountry": "MA"
-                },
-                "sameAs": [
-                  "https://www.linkedin.com/in/abdellah-edaoudi-0bbba02a5/",
-                  "https://abdellah-edaoudi.vercel.app",
-                  "https://www.instagram.com/edaoudi_abdellah/",
-                  "https://www.tiktok.com/@edaoudi_abdellah"
-                ],
-                "priceRange": "$$",
-                "aggregateRating": {
-                  "@type": "AggregateRating",
-                  "ratingValue": "4.8",
-                  "reviewCount": "4657"
-                }
-              })
-            }}
-          />
+          <MyProvider>
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify({
+                  "@context": "https://schema.org",
+                  "@type": "Hotel",
+                  "name": "EdHotel",
+                  "description": "Premium Hotel Management System",
+                  "url": "https://edhotel.vercel.app",
+                  "logo": "https://edhotel.vercel.app/Images/logo.png",
+                  "image": "https://res.cloudinary.com/dynprvsfg/image/upload/v1717421518/wprm2rcy3qvhn1jvc1wk.png",
+                  "telephone": "+212607071966",
+                  "email": "abdellahedaoudi80@gmail.com",
+                  "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "Hay Lwahda 1",
+                    "addressLocality": "Laayoune",
+                    "addressRegion": "Laayoune",
+                    "postalCode": "70000",
+                    "addressCountry": "MA"
+                  },
+                  "sameAs": [
+                    "https://www.linkedin.com/in/abdellah-edaoudi-0bbba02a5/",
+                    "https://abdellah-edaoudi.vercel.app",
+                    "https://www.instagram.com/edaoudi_abdellah/",
+                    "https://www.tiktok.com/@edaoudi_abdellah"
+                  ],
+                  "priceRange": "$$",
+                  "aggregateRating": {
+                    "@type": "AggregateRating",
+                    "ratingValue": "4.8",
+                    "reviewCount": "4657"
+                  }
+                })
+              }}
+            />
 
-          {children}
-        </MyProvider>
+            {children}
+          </MyProvider>
         </ToastProvider>
       </body>
     </html>
