@@ -41,8 +41,11 @@ export function MyProvider({ children }) {
             Cookies.remove('accessToken');
             setUser(null);
         } catch (error) {
-            console.error("Logout failed", error);
-            toast.error("Logout failed. Please try again.");
+            Cookies.remove('jwt');
+            Cookies.remove('accessToken');
+            setUser(null);
+            router.push('/auth/Login');
+
         } finally {
             setIsLoggingOut(false);
         }
