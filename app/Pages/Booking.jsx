@@ -41,18 +41,18 @@ export function Booking() {
             let msg = "Session expired. Please login again.";
             if (status === 404) msg = "User not found. Please login again.";
             if (status === 401) msg = "Authentication required. Please login.";
+            localStorage.removeItem('user');
+            setUser(null);
             if (toast) toast.error(msg);
             router.push('/auth/Login');
-            setUser(null);
           }
         }
       } finally {
         setIsLoading(false);
       }
     };
-
     fetchBookings();
-  }, [router, setUser, toast]);
+  }, []);
 
   // Watch for pdfBooking changes to trigger download
   useEffect(() => {

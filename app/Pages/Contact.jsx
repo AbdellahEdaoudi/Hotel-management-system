@@ -18,7 +18,7 @@ function Contact() {
     // Fetch user's messages
     useEffect(() => {
         const fetchMessages = async () => {
-            if (!user?.id) {
+            if (!user?.id || !localStorage.getItem("user")) {
                 setIsLoadingMessages(false);
                 return;
             }
@@ -38,7 +38,7 @@ function Contact() {
         };
 
         fetchMessages();
-    }, [user]);
+    }, []);
 
     const openDeleteModal = (id, type) => {
         setDeleteModal({ show: true, id, type });
