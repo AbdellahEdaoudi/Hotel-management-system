@@ -133,7 +133,14 @@ export function Booking() {
         logging: false,
         backgroundColor: '#ffffff',
         width: 800, // Fixed width for consistent output
-        windowWidth: 1200 // Simulate decent screen size
+        windowWidth: 1200, // Simulate decent screen size
+        onclone: (clonedDoc) => {
+          // Remove all stylesheets from the cloned document to prevent html2canvas 
+          // from parsing Tailwind v4's modern CSS color functions (like lab/oklch) 
+          // which causes it to crash. The ticket uses inline styles anyway.
+          const styleElements = clonedDoc.querySelectorAll('style, link[rel="stylesheet"]');
+          styleElements.forEach(el => el.remove());
+        }
       });
 
       const imgData = canvas.toDataURL('image/png');
@@ -186,7 +193,7 @@ export function Booking() {
                 {getTotal() > 0 && (
                   <button
                     onClick={() => router.push(`/Checkout?amount=${getTotal()}&type=all`)}
-                    className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-semibold rounded-lg shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto px-4 py-2 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-semibold rounded-lg shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg flex items-center justify-center gap-2"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
@@ -247,7 +254,7 @@ export function Booking() {
                               className="object-cover transition-transform duration-500 hover:scale-105"
                             />
                           ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                            <div className="w-full h-full bg-linear-to-br from-gray-200 to-gray-300 flex items-center justify-center">
                               <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                               </svg>
@@ -299,7 +306,7 @@ export function Booking() {
                             {booking.status !== 'paid' ? (
                               <button
                                 onClick={() => router.push(`/Checkout?amount=${booking.prix}&bookingId=${booking._id}`)}
-                                className="flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-semibold rounded-lg shadow-sm transition-all text-center flex items-center justify-center gap-2"
+                                className="flex-1 px-4 py-2 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-semibold rounded-lg shadow-sm transition-all text-center flex items-center justify-center gap-2"
                               >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                                 Pay Now
@@ -345,7 +352,7 @@ export function Booking() {
                 <p className="text-gray-500 text-sm mb-6">Looks like you haven't made any reservations. Explore our rooms and book your stay today!</p>
                 <Link
                   href="/Rooms"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-semibold rounded-xl shadow-lg transition-transform hover:-translate-y-0.5"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-linear-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-semibold rounded-xl shadow-lg transition-transform hover:-translate-y-0.5"
                 >
                   Browse Rooms
                 </Link>
@@ -383,57 +390,57 @@ export function Booking() {
       {/* Hidden Ticket Component for PDF Generation */
         pdfBooking && (
           <div style={{ position: 'absolute', left: '-9999px', top: 0 }}>
-            <div ref={ticketRef} className="bg-white p-10 w-[800px] text-gray-800 border border-gray-200">
+            <div ref={ticketRef} style={{ backgroundColor: '#ffffff', color: '#1f2937', padding: '40px', width: '800px', border: '1px solid #e5e7eb', fontFamily: 'Arial, sans-serif', boxSizing: 'border-box' }}>
               {/* Header */}
-              <div className="flex justify-between items-center border-b-2 border-orange-500 pb-6 mb-8">
-                <div className="flex items-center gap-3">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #f97316', paddingBottom: '20px', marginBottom: '30px' }}>
+                <div>
                   {/* We use a simple text or local asset if image fails, but here we assume internet */}
-                  <img src="https://res.cloudinary.com/dcnhvlyyu/image/upload/v1770851732/uploads/bggnstx3duhs70icf9vb.png" alt="Logo" className="h-12 w-auto" crossOrigin="anonymous" />
+                  <img src="https://res.cloudinary.com/dcnhvlyyu/image/upload/v1770851732/uploads/bggnstx3duhs70icf9vb.png" alt="Logo" style={{ height: '48px', width: 'auto' }} crossOrigin="anonymous" />
                 </div>
-                <div className="text-right">
-                  <h1 className="text-3xl font-bold text-gray-800">BOOKING TICKET</h1>
-                  <p className="text-sm text-gray-500">#{pdfBooking._id.slice(-8).toUpperCase()}</p>
+                <div style={{ textAlign: 'right' }}>
+                  <h1 style={{ fontSize: '28px', fontWeight: 'bold', color: '#1f2937', margin: 0, lineHeight: 1.2 }}>BOOKING TICKET</h1>
+                  <p style={{ fontSize: '14px', color: '#6b7280', margin: '5px 0 0 0' }}>#{pdfBooking._id.slice(-8).toUpperCase()}</p>
                 </div>
               </div>
 
               {/* Details */}
-              <div className="grid grid-cols-2 gap-8 mb-8">
-                <div>
-                  <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Guest Info</h3>
-                  <p className="font-bold text-lg">{pdfBooking.user?.name || user?.name || 'Guest'}</p>
-                  <p className="text-sm text-gray-600">{pdfBooking.user?.email || user?.email}</p>
+              <div style={{ display: 'flex', marginBottom: '30px' }}>
+                <div style={{ width: '50%' }}>
+                  <h3 style={{ fontSize: '12px', fontWeight: 'bold', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '1px', margin: '0 0 10px 0' }}>Guest Info</h3>
+                  <p style={{ fontWeight: 'bold', fontSize: '18px', margin: '0 0 5px 0', color: '#1f2937' }}>{pdfBooking.user?.name || user?.name || 'Guest'}</p>
+                  <p style={{ fontSize: '14px', color: '#4b5563', margin: 0 }}>{pdfBooking.user?.email || user?.email}</p>
                 </div>
-                <div>
-                  <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Reservation Info</h3>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-600">Check-in:</span>
-                    <span className="font-semibold">{pdfBooking.check_in ? format(parseISO(pdfBooking.check_in), "MMM dd, yyyy") : 'N/A'}</span>
+                <div style={{ width: '50%' }}>
+                  <h3 style={{ fontSize: '12px', fontWeight: 'bold', color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '1px', margin: '0 0 10px 0' }}>Reservation Info</h3>
+                  <div style={{ marginBottom: '8px' }}>
+                    <span style={{ color: '#4b5563', fontSize: '14px', display: 'inline-block', width: '90px' }}>Check-in:</span>
+                    <span style={{ fontWeight: 600, color: '#1f2937', fontSize: '14px' }}>{pdfBooking.check_in ? format(parseISO(pdfBooking.check_in), "MMM dd, yyyy") : 'N/A'}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Check-out:</span>
-                    <span className="font-semibold">{pdfBooking.check_out ? format(parseISO(pdfBooking.check_out), "MMM dd, yyyy") : 'N/A'}</span>
+                  <div>
+                    <span style={{ color: '#4b5563', fontSize: '14px', display: 'inline-block', width: '90px' }}>Check-out:</span>
+                    <span style={{ fontWeight: 600, color: '#1f2937', fontSize: '14px' }}>{pdfBooking.check_out ? format(parseISO(pdfBooking.check_out), "MMM dd, yyyy") : 'N/A'}</span>
                   </div>
                 </div>
               </div>
 
               {/* Room Card in Ticket */}
-              <div className="bg-gray-50 rounded-xl p-6 border border-gray-100 mb-8 flex gap-6">
-                <div className="flex-1">
-                  <h3 className="text-xl font-bold text-orange-600 mb-1">{pdfBooking.room?.name}</h3>
-                  <p className="text-sm font-medium text-gray-700 mb-2">{pdfBooking.room?.type}</p>
-                  <p className="text-xs text-gray-500 leading-relaxed">{pdfBooking.room?.description?.substring(0, 150)}...</p>
+              <div style={{ backgroundColor: '#f9fafb', borderRadius: '12px', padding: '24px', border: '1px solid #f3f4f6', marginBottom: '30px', display: 'flex' }}>
+                <div style={{ flex: 1, paddingRight: '20px' }}>
+                  <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#ea580c', margin: '0 0 8px 0' }}>{pdfBooking.room?.name}</h3>
+                  <p style={{ fontSize: '14px', fontWeight: 500, color: '#374151', margin: '0 0 12px 0' }}>{pdfBooking.room?.type}</p>
+                  <p style={{ fontSize: '12px', color: '#6b7280', lineHeight: 1.6, margin: 0 }}>{pdfBooking.room?.description?.substring(0, 150)}...</p>
                 </div>
-                <div className="text-right min-w-[100px]">
-                  <span className="block text-xs uppercase text-gray-400 font-bold mb-1">Price</span>
-                  <span className="block text-2xl font-bold text-gray-800">${pdfBooking.prix}</span>
-                  <span className="inline-block text-xs text-green-600 font-bold mt-1 bg-green-100 px-2 py-0.5 rounded">PAID</span>
+                <div style={{ textAlign: 'right', minWidth: '120px' }}>
+                  <span style={{ display: 'block', fontSize: '12px', textTransform: 'uppercase', color: '#9ca3af', fontWeight: 'bold', margin: '0 0 5px 0' }}>Price</span>
+                  <span style={{ display: 'block', fontSize: '24px', fontWeight: 'bold', color: '#1f2937', margin: '0 0 10px 0' }}>${pdfBooking.prix}</span>
+                  <span style={{ display: 'inline-block', fontSize: '12px', color: '#16a34a', fontWeight: 'bold', backgroundColor: '#dcfce3', padding: '4px 10px', borderRadius: '6px' }}>PAID</span>
                 </div>
               </div>
 
               {/* Footer */}
-              <div className="text-center border-t border-gray-100 pt-6">
-                <p className="text-sm text-gray-500 mb-1">Thank you for choosing EdHotel.</p>
-                <p className="text-xs text-gray-400">If you have any questions, please contact support@edhotel.com</p>
+              <div style={{ textAlign: 'center', borderTop: '1px solid #f3f4f6', paddingTop: '20px' }}>
+                <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 5px 0' }}>Thank you for choosing EdHotel.</p>
+                <p style={{ fontSize: '12px', color: '#9ca3af', margin: 0 }}>If you have any questions, please contact support@edhotel.com</p>
               </div>
             </div>
           </div>

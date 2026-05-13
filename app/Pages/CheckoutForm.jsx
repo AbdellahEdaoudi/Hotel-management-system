@@ -134,7 +134,9 @@ const CheckoutForm = ({ amount }) => {
       const { error: submitError } = await elements.submit();
 
       if (submitError) {
-        throw new Error(submitError.message);
+        toast.error(submitError.message);
+        setLoading(false);
+        return;
       }
 
       // Create payment intent
@@ -228,7 +230,7 @@ const CheckoutForm = ({ amount }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 py-12 px-4">
+    <div className="min-h-screen bg-linear-to-br from-orange-50 via-amber-50 to-yellow-50 py-12 px-4">
       <div className="max-w-6xl mx-auto">
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -273,9 +275,9 @@ const CheckoutForm = ({ amount }) => {
                   <span className="text-gray-600">Tax (0%)</span>
                   <span className="font-semibold text-gray-800">$0</span>
                 </div>
-                <div className="flex justify-between items-center bg-gradient-to-r from-orange-100 to-amber-100 p-3 rounded-lg">
+                <div className="flex justify-between items-center bg-linear-to-r from-orange-100 to-amber-100 p-3 rounded-lg">
                   <span className="text-lg font-bold text-gray-800">Total</span>
-                  <span className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
+                  <span className="text-2xl font-bold bg-linear-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
                     ${amount}
                   </span>
                 </div>
@@ -306,8 +308,12 @@ const CheckoutForm = ({ amount }) => {
                 </h2>
 
                 <div className="mb-6 min-h-[250px] relative">
-                  {!isPaymentElementLoaded && <PaymentSkeleton />}
-                  <div className={!isPaymentElementLoaded ? 'hidden' : 'block'}>
+                  {!isPaymentElementLoaded && (
+                    <div className="absolute inset-0 z-10 bg-white">
+                      <PaymentSkeleton />
+                    </div>
+                  )}
+                  <div className={!isPaymentElementLoaded ? 'invisible' : 'visible'}>
                     <PaymentElement onReady={() => setIsPaymentElementLoaded(true)} />
                   </div>
                 </div>
@@ -315,7 +321,7 @@ const CheckoutForm = ({ amount }) => {
                 <button
                   type="submit"
                   disabled={!stripe || loading || !isPaymentElementLoaded}
-                  className="w-full py-4 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold text-lg rounded-lg shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3"
+                  className="w-full py-4 bg-linear-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold text-lg rounded-lg shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3"
                 >
                   {loading ? (
                     <>

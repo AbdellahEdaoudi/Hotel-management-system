@@ -1,6 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-text: var(--brand-text);
+  --color-brand-muted: var(--brand-text-muted);
+}
 
 @layer base {
   :root {
@@ -25,11 +31,11 @@
   }
   
   .premium-gradient {
-    @apply bg-gradient-to-br from-amber-400 via-amber-500 to-orange-600;
+    @apply bg-linear-to-br from-amber-400 via-amber-500 to-orange-600;
   }
 
   .text-gradient {
-    @apply bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent;
+    @apply bg-linear-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent;
   }
 
   .hover-lift {

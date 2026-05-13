@@ -14,6 +14,7 @@
     "@stripe/stripe-js": "^9.5.0",
     "axios": "^1.16.0",
     "date-fns": "^4.1.0",
+    "dom-to-image-more": "^3.7.2",
     "framer-motion": "^12.38.0",
     "html2canvas": "^1.4.1",
     "js-cookie": "^3.0.5",
@@ -24,6 +25,8 @@
     "stripe": "^22.1.1"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.0",
+    "@types/node": "25.7.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "autoprefixer": "^10.4.19",
