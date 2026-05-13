@@ -250,8 +250,9 @@ export function Booking() {
                             <Image
                               src={booking.room.imageUrl}
                               alt={booking.room.name || "Room"}
-                              fill
-                              className="object-cover transition-transform duration-500 hover:scale-105"
+                              width={400}
+                              height={300}
+                              className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                             />
                           ) : (
                             <div className="w-full h-full bg-linear-to-br from-gray-200 to-gray-300 flex items-center justify-center">
@@ -433,7 +434,7 @@ export function Booking() {
                 <div style={{ textAlign: 'right', minWidth: '120px' }}>
                   <span style={{ display: 'block', fontSize: '12px', textTransform: 'uppercase', color: '#9ca3af', fontWeight: 'bold', margin: '0 0 5px 0' }}>Price</span>
                   <span style={{ display: 'block', fontSize: '24px', fontWeight: 'bold', color: '#1f2937', margin: '0 0 10px 0' }}>${pdfBooking.prix}</span>
-                  <span style={{ display: 'inline-block', fontSize: '12px', color: '#16a34a', fontWeight: 'bold', backgroundColor: '#dcfce3', padding: '4px 10px', borderRadius: '6px' }}>PAID</span>
+                  <div style={{ display: 'inline-block', fontSize: '12px', color: '#16a34a', fontWeight: 'bold', backgroundColor: '#dcfce3', width: '60px', height: '24px', lineHeight: '24px', textAlign: 'center', borderRadius: '6px' }}>PAID</div>
                 </div>
               </div>
 

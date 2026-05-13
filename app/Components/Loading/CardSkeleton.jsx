@@ -2,7 +2,7 @@ import React from 'react';
 
 const CardSkeleton = () => {
     return (
-        <div className="bg-white rounded-md shadow-md border pb-4 animate-pulse">
+        <div className="bg-white rounded-md shadow-md pb-4 animate-pulse">
             <div className="w-full h-48 bg-gray-200 rounded-t-md"></div>
             <div className="px-5 pt-4">
                 <div className="flex justify-between mb-3">

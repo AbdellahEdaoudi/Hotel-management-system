@@ -51,9 +51,9 @@ function Rooms() {
           ))
         ) : (
           (filterType === "" ? rooms : rooms.filter((room) => room.type === filterType)).map((room, i) => (
-            <div className="bg-white rounded-md shadow-md border pb-4" key={i} >
+            <div className="bg-white rounded-md shadow-md  pb-4" key={i} >
               <nav className="relative h-48">
-                <Link href={`/Rooms/${room._id}`}>
+                <Link href={`/Rooms/${room._id}`} className="relative block w-full h-full">
                   <Image src={room.imageUrl} alt={room.name} fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover rounded-t-md" />
                 </Link>
@@ -71,10 +71,10 @@ function Rooms() {
                 </div>
                 <div className="flex justify-between mt-5">
                   <Link href={`/Rooms/${room._id}`}>
-                    <button className="p-2 rounded-md hover:scale-105 duration-150 bg-yellow-500 text-white">VIEW DETAIL</button>
+                    <button className="p-2 cursor-pointer rounded-md hover:scale-105 duration-150 bg-yellow-500 text-white">VIEW DETAIL</button>
                   </Link>
                   <Link href={`/Rooms/${room._id}`}>
-                    <button className="p-2 rounded-md hover:scale-105 duration-150 bg-black text-white">BOOK NOW</button>
+                    <button className="p-2 cursor-pointer rounded-md hover:scale-105 duration-150 bg-black text-white">BOOK NOW</button>
                   </Link>
                 </div>
               </div>
